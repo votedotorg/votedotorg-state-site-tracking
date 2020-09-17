@@ -1,8 +1,16 @@
 class HtmlScraper {
-    scrape(url, priorVersion) {
+    scrape(currentHtml, previousHtml) {
         const diffs = [];
-        const pdfs = []
+        const pdfs = this.findLinksToPdfs(currentHtml)
         return { diffs, pdfs };
+    }
+
+    extractText(html) {
+        return '';
+    }
+
+    findLinksToPdfs(html) {
+        return [];
     }
 }
 

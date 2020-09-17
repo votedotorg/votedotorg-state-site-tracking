@@ -12,11 +12,21 @@ class Scheduler {
         const pdf = new PdfScraper();
 
         // fetch html urls to scrape from the db
-        const changes = [];
         const urls = [];
-
-        for(let i = 0; i < urls.length; i++) {
-            
+        const pages = urls.filter(u => false);
+        const knownPdfs = urls.filter(u => false);
+        
+        const changes = [];
+        const currentPdfs = [];
+        for(let i = 0; i < pages.length; i++) {
+            // diff html
+            // find pdfs
+        }
+        // compute intersection of currentPdfs and knownPdfs
+        // add a change for new pdfs and retired pdfs
+        for (let i = 0; i < knownPdfs.length; i++) {
+            // diff pdfs
+            // somehow notify missing pdfs
         }
 
         const notifer = new Notifier();

@@ -1,18 +1,15 @@
-const diff = require('diff');
+const url = require('url');
 const cherio = require('cherio');
 const extractText = require('html-to-text');
+const { diffText } = require('./text');
 
 class HtmlScraper {
     compareVersions(url, currentHtml, previousHtml) {
         const currentText = this.extractText(currentHtml, url);
         const previousText = this.extractText(previousHtml, url);
 
-        const changes = diff.diffSentences(previousText, currentText);
-        const diffs = [];
-        for(let i = 0; i < changes.length; i++) {
-            // console.log(changes);
-        }
-        const pdfs = this.findLinksToPdfs(currentHtml)
+        const diffs = diffText(previousText, currentText);
+        const pdfs = this.findLinksToPdfs(currentHtml, url)
         return { diffs, pdfs };
     }
 
@@ -24,9 +21,18 @@ class HtmlScraper {
         });
     }
 
-    findLinksToPdfs(html) {
-        return [];
+    findLinksToPdfs(html, baseUrl) {
+        const $ = cherio.load(html);
+        const urls = []
+        $('a').each((i, el) => urls.push($(el).attr('href')))
+        return urls
+            .filter(href => href.endsWith('.pdf'))
+            .map(href => isRelative(href) ? url.resolve(baseUrl, href) : href);
     }
+}
+
+function isRelative(path) {
+    return path.startsWith('.') || (path.startsWith('/') && !path.startsWith('//'))
 }
 
 module.exports = HtmlScraper;

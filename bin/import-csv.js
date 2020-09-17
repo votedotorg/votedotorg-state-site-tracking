@@ -11,7 +11,7 @@ const parser = csvParse({ columns: true });
 const ScrapeItemSchema = require('../src/database/scrape-item');
 const ScrapeItem = mongoose.model('ScrapeItem', ScrapeItemSchema);
 
-mongoose.connect(connetionString, {useNewUrlParser: true});
+mongoose.connect(connetionString, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));

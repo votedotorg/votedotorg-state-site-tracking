@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/BruceBGordon/votedotorg-state-site-tracking#readme",
   "dependencies": {
+    "axios": "^0.20.0",
     "chai": "^4.2.0",
     "colors": "^1.4.0",
     "diff": "^4.0.2",

@@ -1,54 +1,48 @@
 const fs 		= require('fs');
 const pdf 		= require('pdf-parse');
 const path 		= require('path');
-const uuid 		= require('uuid');
+const axios 	= require('axios');
 const mongo 	= require('mongodb');
 const crypto 	= require('crypto');
-const request 	= require("request-promise-native");
 
 async function retrieveAndComparePDF(pdfToCompare) 
 {
-	var oldPDFHash 				= pdfToCompare.hash
-	let remotePDFURL 			= pdfToCompare.url
-	let tempfilePathToWriteTo 	= path.resolve( __dirname, uuid.v4() + ".pdf")
+	var oldPDFHash   = pdfToCompare.hash
+	let remotePDFURL = pdfToCompare.url
 
-	//Get the pdf file
-    let pdfBuffer = await request.get({uri: remotePDFURL, encoding: null})
-        
-    //Save the pdf file
-    fs.writeFileSync(tempfilePathToWriteTo, pdfBuffer)
-
-    //Read from file
-	let newPDFDataBuffer = fs.readFileSync(tempfilePathToWriteTo)
-
-	//Get PDF information
-    pdf(newPDFDataBuffer).then(function(data) 
+	//Request the new PDF via axios
+	axios(
 	{
-		//Hash the new pdf body text
-	    var newPDFHash = crypto.createHash('md5').update(data.text).digest('hex')
-
-	    console.log("Old hash: " + oldPDFHash)
-	    console.log("New hash: " + newPDFHash)
-
-	    //Compare the new hash against the previous hash
-	    //Hashes are the same
-	    if (newPDFHash === oldPDFHash)
-	    {
-			console.log("Hashes match")
-			//Do nothing, hashes are the same, we are done here.
-	    }
-	    //Hashes aren't the same
-	    else
-	    {
-			console.log("Hashes do not match")
-
-	    	//TODO: Insert the hash, etc. combination into database
-			//TODO: Send notifications that hashes do not match
-	    }
-
-		//Delete the temp PDF file 
-		fs.unlinkSync(tempfilePathToWriteTo)
+  		url: remotePDFURL,
+  		responseType: 'arraybuffer' //arraybuffer to get translated by the pdf-parse library
 	})
+  	.then(function (response)
+  	{
+      	//Get PDF information
+		pdf(response.data).then(function(data) 
+		{
+			//Hash the new pdf body text
+		    var newPDFHash = crypto.createHash('md5').update(data.text).digest('hex')
+
+		    console.log("Old hash: " + oldPDFHash)
+		    console.log("New hash: " + newPDFHash)
+
+		    //Compare the new hash against the previous hash
+		    //Hashes are the same
+		    if (newPDFHash === oldPDFHash)
+		    {
+				console.log("Hashes match")
+				//Do nothing, hashes are the same, we are done here.
+		    }
+		    //Hashes aren't the same
+		    else
+		    {
+				console.log("Hashes do not match")
+		    	//TODO: Insert the hash, etc. combination into database
+				//TODO: Send notifications that hashes do not match
+		    }
+		})
+  	})
 }
 
 //TODO: Pull out the list of pdf/hash, etc. from database

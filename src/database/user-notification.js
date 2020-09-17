@@ -2,8 +2,7 @@ const { Schema } = require('mongoose');
 
 // no need for id
 module.exports = new Schema({
-    id: Number,
-    scrapeId: Number,
+    scrapeId: ObjectId,
     lastNotifyDate: Date,
     lastChangeJobId: Number
 });

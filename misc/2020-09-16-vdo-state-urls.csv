@@ -1,0 +1,52 @@
+State abbr,State name,General Election Page URL,Absentee Info URL
+AL,Alabama,https://sos.alabama.gov/alabama-votes,https://www.alabamavotes.gov/AbsenteeVotingInfo.aspx?m=voters
+AK,Alaska,http://www.elections.alaska.gov,http://www.elections.alaska.gov/Core/votingbymail.php
+AZ,Arizona,https://azsos.gov/elections,https://azsos.gov/elections/voting-election
+AR,Arkansas,https://www.sos.arkansas.gov/elections,https://www.sos.arkansas.gov/elections/voter-information/absentee-voting
+CA,California,https://www.sos.ca.gov/elections,https://www.sos.ca.gov/elections/voter-registration/vote-mail/
+CO,Colorado,https://www.sos.state.co.us/pubs/elections/main.html,https://www.sos.state.co.us/pubs/elections/electionInfo.html?menuheaders=5
+CT,Connecticut,https://portal.ct.gov/SOTS/Common-Elements/V5-Template---Redesign/Elections--Voting--Home-Page,https://portal.ct.gov/SOTS/Election-Services/Voter-Information/Absentee-Voting
+DE,Delaware,https://elections.delaware.gov/index.shtml,https://elections.delaware.gov/voter/absenteeballot.shtml
+DC,District of Columbia,https://www.dcboe.org/home,https://www.vote4dc.com/ApplyInstructions/Absentee
+FL,Florida,https://dos.myflorida.com/elections/,https://dos.myflorida.com/elections/for-voters/voting/absentee-voting/
+GA,Georgia,https://sos.ga.gov/index.php/?section=elections,https://sos.ga.gov/index.php/Elections/absentee_voting_in_georgia
+HI,Hawaii,http://hawaii.gov/elections,https://elections.hawaii.gov/voters/hawaii-votes-by-mail/
+ID,Idaho,https://sos.idaho.gov/elections-division/,https://idahovotes.gov/absentee-voter-information/
+IL,Illinois,https://www.elections.il.gov,https://www.elections.il.gov/ElectionOperations/VotingByMail.aspx
+IN,Indiana,https://www.in.gov/sos/elections/,https://www.in.gov/sos/elections/2402.htm
+IA,Iowa,https://sos.iowa.gov/elections/voterinformation/index.html,https://sos.iowa.gov/elections/electioninfo/absenteeinfo.html
+KS,Kansas,https://sos.kansas.gov/elections/,https://sos.kansas.gov/elections/registration-voting/
+KY,Kentucky,https://elect.ky.gov/Pages/default.aspx,https://elect.ky.gov/Voters/Pages/Absentee-Voting.aspx
+LA,Louisiana,https://www.sos.la.gov/electionsandvoting/Pages/default.aspx,https://www.sos.la.gov/electionsandvoting/vote/votebymail/pages/default.aspx
+ME,Maine,https://www.maine.gov/sos/cec/elec/,https://www.maine.gov/cgi-bin/online/AbsenteeBallot/index.pl
+MD,Maryland,https://elections.maryland.gov/,https://elections.maryland.gov/voting/absentee.html
+MA,Massachusetts,https://www.sec.state.ma.us/ele/eleidx.htm,https://www.sec.state.ma.us/ele/eleabsentee/absidx.htm
+MI,Michigan,"https://www.michigan.gov/sos/0,4670,7-127-1633---,00.html","https://www.michigan.gov/sos/0,4670,7-127-1633_8716_8728-21037--,00.html"
+MN,Minnesota,https://www.sos.state.mn.us/elections-voting/,https://mnvotes.sos.state.mn.us/ABRegistration/ABRegistrationStep1.aspx
+MS,Mississippi,https://www.sos.ms.gov/Elections-Voting/Pages/default.aspx,https://www.sos.ms.gov/elections-voting/documents/voterinformationguide.pdf
+MO,Missouri,https://www.sos.mo.gov/elections,https://www.sos.mo.gov/elections/goVoteMissouri/howtovote#absentee
+MT,Montana,https://sosmt.gov/elections/,https://sosmt.gov/elections/absentee/
+NE,Nebraska,https://www.nebraska.gov/featured/elections-voting/,https://sos.nebraska.gov/elections/early-voting
+NV,Nevada,https://www.nvsos.gov/sos/elections,https://www.nvsos.gov/sos/elections/voters/absentee-voting
+NH,New Hampshire,https://sos.nh.gov/Elections.aspx,https://sos.nh.gov/Elections.aspx
+NJ,New Jersey,https://www.state.nj.us/state/elections/index.shtml,https://www.state.nj.us/state/elections/vote-by-mail.shtml
+NM,New Mexico,https://www.sos.state.nm.us/voting-and-elections/,https://www.sos.state.nm.us/voting-and-elections/voter-information/absentee-and-early-voting/
+NY,New York,https://www.elections.ny.gov/,https://www.elections.ny.gov/VotingAbsentee.html
+NC,North Carolina,https://www.ncsbe.gov/ncsbe/,https://www.ncsbe.gov/Voting-Options/Absentee-Voting
+ND,North Dakota,https://vip.sos.nd.gov/PortalList.aspx,https://vip.sos.nd.gov/PortalListDetails.aspx?ptlhPKID=53&ptlPKID=7#content-start
+OH,Ohio,https://www.ohiosos.gov/elections/,https://www.sos.state.oh.us/elections/voters/absentee-voting/#byMail
+OK,Oklahoma,https://www.ok.gov/elections/,https://www.ok.gov/elections/Voter_Info/Absentee_Voting/
+OR,Oregon,https://sos.oregon.gov/voting-elections/Pages/default.aspx,https://sos.oregon.gov/voting/Pages/voteinor.aspx
+PA,Pennsylvania,https://www.dos.pa.gov/VotingElections/Pages/default.aspx,https://www.votespa.com/Voting-in-PA/Pages/Mail-and-Absentee-Ballot.aspx
+RI,Rhode Island,https://vote.sos.ri.gov/,https://vote.sos.ri.gov/Voter/VotebyMail
+SC,South Carolina,https://www.scvotes.org/,https://www.scvotes.org/absentee-voting
+SD,South Dakota,https://sdsos.gov/elections-voting/default.aspx,https://sdsos.gov/elections-voting/voting/absentee-voting.aspx
+TN,Tennessee,https://sos.tn.gov/elections,https://sos.tn.gov/products/elections/absentee-voting
+TX,Texas,https://www.sos.state.tx.us/elections/index.shtml,https://www.votetexas.gov/faq/early-voting.html
+UT,Utah,https://elections.utah.gov/,https://vote.utah.gov/
+VT,Vermont,https://sos.vermont.gov/elections/,https://sos.vermont.gov/elections/voters/early-absentee-voting/
+VA,Virginia,https://www.elections.virginia.gov/,https://www.elections.virginia.gov/casting-a-ballot/absentee-voting/
+WA,Washington,https://www.sos.wa.gov/elections/,https://www.sos.wa.gov/elections/faq_vote_by_mail.aspx
+WV,West Virginia,https://sos.wv.gov/elections/Pages/default.aspx,https://sos.wv.gov/elections/Pages/AbsenteeVotingInformation.aspx
+WI,Wisconsin,https://elections.wi.gov/,https://myvote.wi.gov/en-us/VoteAbsentee
+WY,Wyoming,https://soswy.state.wy.us/elections,https://soswy.state.wy.us/Elections/AbsenteeVoting.aspx

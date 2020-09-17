@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<!-- saved from url=(0025)https://olvr.vermont.gov/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>:: Vermont Election Division ::</title>
+    <link href="https://olvr.vermont.gov/favicon.ico" rel="shortcut icon" type="image/x-icon">
+
+    <link href="./VR__ Vermont Election Division ___files/dialog_box.css" rel="stylesheet">
+
+    <script async="" src="./VR__ Vermont Election Division ___files/analytics.js"></script><script src="./VR__ Vermont Election Division ___files/modernizr"></script>
+
+    <script src="./VR__ Vermont Election Division ___files/jquery"></script>
+
+    <script src="./VR__ Vermont Election Division ___files/jqueryval"></script>
+
+    <script src="./VR__ Vermont Election Division ___files/common"></script>
+
+    <link href="./VR__ Vermont Election Division ___files/css" rel="stylesheet">
+
+    <script src="./VR__ Vermont Election Division ___files/jQueryFiles"></script>
+
+    <script src="./VR__ Vermont Election Division ___files/dialog_box.js"></script>
+    <script language="javascript" type="text/javascript" src="./VR__ Vermont Election Division ___files/Messages"></script>
+    <script type="text/javascript" language="javascript">
+        /* Start Google Analytic Code */
+        var GoogleCode = 'UA-27410400-11';
+        if (GoogleCode != '' && GoogleCode != null) {
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', GoogleCode, 'auto');
+            ga('send', 'pageview');
+
+        }
+        /* End Google Analytic Code */
+
+        // Ajax before send
+        /* To Set the Header for all ajax calls to send the key */
+        $(function () {
+            $.ajaxSetup({
+                headers: {
+                    '__RequestVerificationToken': $('[name=__RequestVerificationToken]').val()
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <input name="__RequestVerificationToken" type="hidden" value="uXGbjhvJFSz_mdQU8bbkORfVK5QpaMrTNBdEWY71CJJFp07p7cQTk8F_OsyPdD2ucIXNO8E8x6-7Azp92DSzSRsIOwho6-_5r0QE_nUA8aI1">
+    <div class="container">
+        <div class="mob_header hide">
+            <div class="left">
+                <img src="./VR__ Vermont Election Division ___files/header_mob_left.png" alt="">
+            </div>
+            <div class="right">
+                <img src="./VR__ Vermont Election Division ___files/header_mob_right.png" alt="" height="67" width="185">
+            </div>
+        </div>
+        <header class="header">
+            <div class="logo">
+                <img src="./VR__ Vermont Election Division ___files/ImageGen.ashx.png" alt="VermontSecretaryofState">
+                <br>
+                <br>
+                <div class="header_text">Online Voter Registration System</div>
+
+                <div class="header_mobile_text">
+                    Online Voter Registration System
+                </div>
+
+            </div>
+
+            <div class="header_right">
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="secretaryJob">Vermont Secretary of State</div>
+                <div class="clr"></div>
+                <div class="secretaryName">Jim Condos</div>
+            </div>
+            <p> </p>
+            <div class="clr"></div>
+            <div class="header_mobile_text2">
+                Online Voter Registration System
+            </div>
+
+        </header>
+        <!--end of header part -->
+        <!-- start of contentpane-->
+        <input type="hidden" id="hdnImageCurrent" name="hdnImageCurrent">
+        
+
+
+<script src="./VR__ Vermont Election Division ___files/jquery.maskedinput-1.4.1.js"></script>
+<script src="./VR__ Vermont Election Division ___files/common.js"></script>
+<script src="./VR__ Vermont Election Division ___files/generic.js"></script>
+
+<script src="./VR__ Vermont Election Division ___files/basic.js"></script>
+
+<script src="./VR__ Vermont Election Division ___files/jquery.simplemodal.1.4.4.min.js"></script>
+<style>
+    /* Small red Button */
+    .button_small_red {
+        background: #B11F10;
+        border-radius: 8px;
+        padding: 3px 10px 3px 10px;
+        color: #fff;
+        font-size: 10px;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        border: 0px;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+
+        .button_small_red:link {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .button_small_red:hover {
+            background: #741F22;
+            border-radius: 8px;
+            padding: 3px 10px 3px 10px;
+            color: #fff;
+            font-size: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            border: 0px;
+            cursor: pointer;
+        }
+
+    #simplemodal-container .simplemodal-data {
+        overflow: auto;
+    }
+
+    .screentitlesub1 {
+        border-bottom: 0 solid #f1f0d6;
+        color: #7a2426;
+        font-weight: bold;
+    }
+
+    .VoterInfoBox {
+        background: #ffffea;
+        width: 100%;
+        height: auto;
+        min-height: 190px;
+        border: 2px solid #e1dfc6;
+        border-radius: 5px;
+        float: left;
+    }
+
+    .header_top {
+        margin-left: 1%;
+        font-weight: 600;
+        padding: 1%;
+    }
+
+    .required_field {
+        margin-left: 83%;
+        margin-bottom: -7%;
+    }
+
+    .txtborder {
+        background: none repeat scroll 0 0 #fff;
+        border: 1px solid #c7c6b1;
+        border-radius: 3px;
+        color: #666;
+        padding: 3px;
+    }
+    .button_small {
+        background: none repeat scroll 0 0 #a8a175;
+        border: 0 none;
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 4px 12px;
+        text-transform: uppercase;
+    }
+    #simplemodal-overlay {
+        background-color: #6A8BBF;
+        cursor: default;
+    }
+    /*#backgroundPopup {
+        background: #6A8BB;
+    }*/
+</style>
+
+<div class="contentpane">
+    
+    
+
+    <div class="help" style="display: none;">
+        <table>
+            <tbody><tr>
+                <td>
+                    <a href="https://olvr.vermont.gov/#"><img src="./VR__ Vermont Election Division ___files/iconhelp.png" title="Help" onclick="viewHelpPage()" alt="Help"></a>
+                </td>
+            </tr>
+        </tbody></table>
+    </div>
+
+    
+    <table width="100%">
+        <tbody><tr id="errorsPlaceHolderRow" style="display: none; text-align: left;">
+            <td style="width: 100%; background: #fee2d4">
+                <ul id="errorsPlaceHolder"></ul>
+            </td>
+        </tr>
+        <tr id="errorsPlaceHolderSpaceRow" style="display:none;">
+            <td>&nbsp;</td>
+        </tr>
+    </tbody></table>
+    <div class="index">
+        <table id="tblValidate" style="display:none">
+            <tbody><tr>
+                <td>
+                    <input id="hdnValidate" rule="{$app.message.ValidateSource,&#39;required&#39;}">
+                </td>
+            </tr>
+        </tbody></table>
+        <div>
+
+            
+            <p style="width: initial ; background: #fee2d4" id="errorsPlaceHolder1">
+                There is no deadline to register, you may register to vote up to and including the day of the election. However,<strong>if you register online the day before the election or on Election Day, your application may not be processed and your name may not appear on the checklist </strong> and you may be asked to fill out another application at the polls. To be sure your name appears on the checklist, <strong>please register by the Friday before the election.</strong>
+            </p>
+            <br>
+
+        </div>
+
+
+        
+
+        <h2>Get Started:</h2>
+        <div>
+            <ol>
+                <li>1. Fill in all of the required fields on this application.</li>
+                <li>2. You are not registered to vote until your application is approved by the Town Clerk.</li>
+                <li>
+                    3. You should receive an acknowledgment within two to four weeks after submitting or mailing your registration. Please contact
+                    your Town Clerk if you have not received any information within this time.
+                </li>
+                <li>
+                    4. If you are registering to vote in Vermont for the first time, you must include a photocopy of an acceptable form of ID. Acceptable forms of ID are:<br>
+                    <span style="margin-left: 14px; font-size: 16px;">●</span> Valid photo ID (driver’s license or passport)<br>
+                    <span style="margin-left: 14px; font-size: 16px;">●</span> Current utility bill<br>
+                    <span style="margin-left: 14px; font-size: 16px;">●</span> Current bank statement<br>
+                    <span style="margin-left: 14px; font-size: 16px;">●</span> Another government document containing your residential address.
+                </li>
+            </ol>
+        </div>
+
+        <div class="clr"></div>
+        <br>
+        <div class="lt_or">
+            <input type="button" class="button_home" title="Check Status" value="Check Status" onclick="CheckVoterInfoPopup()" name="input">
+        </div>
+        <div class="clr"></div>
+        <br>
+        <div>
+            <div class="lt_or">
+                <input type="button" class="button_home" onclick="SaveTempData(true);" value="I HAVE A VALID VT DRIVER&#39;S LICENSE/PERMIT/ID #" name="btnRegister">
+            </div>
+            <div class="lt_or"><img src="./VR__ Vermont Election Division ___files/or.gif" alt="or"></div>
+            <div class="lt_or">
+                <input type="button" class="button_home" onclick="SaveTempData(false);" value="I DO NOT HAVE A VALID VT DRIVER&#39;S LICENSE/PERMIT/ID #" name="btnRegister">
+            </div>
+        </div>
+        <br>
+        <br>
+        <div>
+            <strong>You may use this system to:</strong>
+            <br>
+            (1) register to vote in Vermont, (2) change your name and/or address on your current voter registration record.
+        </div>
+        
+    </div>
+    <div class="clr"></div>
+    <p class="pd10 bg_light">
+        <strong>WARNING:</strong> A person who makes false statements on this application shall be subject to federal or state criminal penalties of up to a $10,000 fine, or imprisonment for not more than 15 years, or both. (17 V.S.A. § 2145(f); 17 V.S.A. § 2011; 42 U.S.C. § 1973gg-10).
+    </p>
+</div>
+<div id="backgroundPopup" style="opacity: 0.7; display: none;"></div>
+<div id="divPopupVoterInfo" style="display: none;" class="boxbg">
+    <form id="frmPopupForm" name="frmPopupForm" method="post" class="">
+        <input name="__RequestVerificationToken" type="hidden" value="rVdQbGFcvWqOxioIBYwfrgYDG2PTPSvZ4MXC3tDf646AmoX1EZsdySxaEk857sY-lj6qmqsEU5Y7xheQS4u1g6aVShiqqwX5xm_VWkcbZZc1">
+        <div>
+            <table width="100%">
+                <tbody><tr>
+                    <td align="left" width="50%">
+                        <span class="screentitlesub1"> <label id="lblheading">CHECK REGISTRATION STATUS</label></span>
+                    </td>
+                    <td align="right" width="50%">
+                        <label class="button_small_red" title="Close" onclick="WindowClose();">Close</label>
+                    </td>
+                </tr>
+            </tbody></table>
+        </div>
+        <div class="VoterInfoBox">
+            <table width="100%" class="popupbg  clsSearch" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td>
+                            <table id="tabValidate1" style="display:none" width="97%">
+                                <tbody><tr id="errorsPlaceHolderSpaceRow1">
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr id="errorsPlaceHolderRow1" style="text-align: left;">
+                                    <td style="width: 100%; background: #fee2d4">
+                                        <ul id="errorsPlaceHolder1"></ul>
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p class="header_top"> Enter the below information to check you are already registered to vote with the state of Vermont.</p>
+                            <p class="required_field"><span class="red">*</span>= required field</p>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td align="left" valign="middle">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                <tbody>
+                                    <tr>
+                                        <td align="right" colspan="4"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td align="right"><span class="red">*</span>First Name:</td>
+                                        <td>
+                                            <input name="txtPopupFirstName" class="txtborder" id="txtPopupFirstName" type="text" maxlength="20" rule="{$app.message.ValidatePopFirstName,&#39;required&#39;}" autofocus="autofocus">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="20%" align="right"><span class="red">*</span>Last Name:</td>
+                                        <td width="27%">
+                                            <input name="txtPopupLastName" class="txtborder" id="txtPopupLastName" type="text" maxlength="20" rule="{$app.message.ValidatePopLastName,&#39;required&#39;}">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"><span class="red">*</span>Date of Birth:</td>
+                                        <td>
+                                            <input type="text" class="txtborde" name="txtPopDOB" id="txtPopDOB" placeholder="__/__/____" onkeypress="return isNumberKey(event, this);" onkeyup="return isNumberKey(event, this);" rule=" {$app.message.ValidatePopDOB,&#39;required&#39;}" maxlength="10" size="10">
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br><table width="100%" border="0" cellspacing="0" cellpadding="0" class="popupbg clsSearch">
+                <tbody>
+
+                    <tr>
+                        <td align="center">
+                            <input title="Check Status" class="button" onclick="GetVoterInfo();" type="button" value="Check Status">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="button_small" onclick="clearpopupdata();" title="Clear" value="Clear" style="margin-bottom: 1%;">
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+
+            <table width="95%" border="0" cellspacing="0" cellpadding="0" class="popupbg clsResult" align="center" style="margin-top:-3%;">
+                <tbody>
+                    <tr>
+                        <td valign="top" align="left" class="header_top">
+                            First Name: <label id="lblFname"></label>
+                        </td>
+                        <td valign="top" align="center" class="header_top">
+                            Last Name: <label id="lblLname"></label>
+                        </td>
+                        <td valign="top" align="right" class="header_top">
+                            Date of Birth: <label id="lblDOB"></label>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" colspan="3" width="90%">
+                            <div id="divVoterInfo" style="min-height:180px;max-height:210px;overflow:auto; width:90%;">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="popupbg clsResult" style="padding: 0px 0px 10px 20px;">
+                <tbody>
+                    <tr>
+                        <td align="left">
+                            <input type="button" class="button_small" onclick="BacktoSearch();" title="Back" value="Back" style="margin-top: 0%;">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        if ('' == "0") {
+            $("[name=btnRegister]").removeClass("button_home");
+            $("[name=btnRegister]").addClass("button_disable");
+            $("[name=btnRegister]").attr("disabled", true);
+            $ec.validate("tblValidate");
+        }
+    });
+
+    function SaveTempData(haveDL) {
+        $.ajax({
+            type: 'post',
+            data: { Source: '', HaveDL: haveDL },
+            beforeSend: function (request) {
+                request.setRequestHeader("__RequestVerificationToken", ($('[name=__RequestVerificationToken]') != null ? $('[name=__RequestVerificationToken]').val() : ''));
+            },
+            headers: {
+                '__RequestVerificationToken': $('[name=__RequestVerificationToken]').val()
+            },
+            url: "/Registration/SavetheRequest",
+            success: function (data) {
+                window.location = '/Registration/RegistrationDetails';
+            }
+        });
+    }
+
+    /* Check Voter Info Popup Pop-Up */
+     function CheckVoterInfoPopup() {
+      //  if ($.mask) {
+       //     $("#txtPopDOB").mask("99/99");
+      //      $("#txtPopDOB").mask("99/99/9999");
+      //      $("#txtPopDOB").attr("placeholder", "__/__/____");
+      //  }
+        $('#divPopupVoterInfo').show();
+        $("#divPopupVoterInfo").modal();
+        $("#simplemodal-container").css({ 'min-height': '70%','position': 'fixed', 'z-index': '1002' });
+        $('#simplemodal-container').draggable();
+        $('.clsSearch').show();
+        $('.clsResult').hide();
+        $('#txtPopupFirstName').focus();
+        $('#backgroundPopup').show();
+        $('#backgroundPopup').hide();
+    }
+
+    // clear pop up data
+    function clearpopupdata() {
+        $("#txtPopupLastName").val("");
+        $("#txtPopupFirstName").val("");
+        $("#txtPopDOB").val("");
+        $ec.obj('errorsPlaceHolderRow').style.display = "none";
+        $('img.errorIndicator').hide();
+    }
+    
+    function isNumberKey(evt, ctrlName) {
+        var str = ctrlName.value;
+        var charCode = (evt.which) ? evt.which : evt.keyCode
+        if (charCode < 58 && charCode > 47) {
+            if (str.match(/^\d{2}$/) !== null) {
+                ctrlName.value = str + '/';
+            }
+            else if (str.match(/^\d{2}\/\d{2}$/) !== null) {
+                ctrlName.value = str + '/';
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    // Pop up DOB validation
+    function ValidatePopDOB() {
+        var dateFormat = "mm/dd/yyyy";
+        if (trim($ec.obj("txtPopDOB").value) == '') {
+            return $app.message.ValidatePopReqDOB;
+        }
+        else if (!$ec.isDate(trim($ec.obj("txtPopDOB").value), dateFormat)) {
+            return $ec.messagebox($app.message.ValidatePopDOB);
+        }
+        else if (new Date() < new Date(trim($ec.obj("txtPopDOB").value))) {
+            return $ec.messagebox($app.message.ValidDateNotFuture);
+        }
+        else if (new Date(trim($ec.obj("txtPopDOB").value)).getFullYear() < 1900) {
+            return $ec.messagebox($app.message.ValidDOB);
+        }
+        else {
+            return '';
+        }
+    }
+    /* close - popup code */
+    function WindowClose() {
+        $.modal.close();
+        $('#divPopupVoterInfo').hide();
+        $ec.obj('errorsPlaceHolderRow').style.display = "none";
+        $('#backgroundPopup').hide();
+    }
+
+    // Get popup Voter Information
+    function GetVoterInfo() {
+        if (ValidateFormSubmit("frmPopupForm")) {
+            if (ValidatePopDOB() == '') {
+                $.ajax({
+                    type: 'post',
+                    data: $("#frmPopupForm").serialize(),
+                    beforeSend: function (request) {
+                        request.setRequestHeader("__RequestVerificationToken", ($('[name=__RequestVerificationToken]') != null ? $('[name=__RequestVerificationToken]').val() : ''));
+                    },
+                    headers: {
+                        '__RequestVerificationToken': $('[name=__RequestVerificationToken]').val()
+                    },
+                    async: false,
+                    url: '/Registration/GetVoterCheckInfo',
+                    success: function (result) {
+                        $("#divVoterInfo").html(result);
+                        if ($ec.obj('VoterInfoListGrid').innerHTML.indexOf('No records to view.') > -1) {
+                            $("#VoterInfoListGrid > tbody").empty();
+                            $("#VoterInfoListGrid > tbody").append("<tr><td class='gridEmptyData' colspan='13'>No registration found.<br/> <span class='checktstatusError'>  If you believe you are already registered to vote, contact your town clerk to update your information. If you are not registered, please <br><a href='''> click here</a> to register online.</span></td></tr>")
+                        }
+                        else {
+                            $("#VoterInfoListGrid > tbody").append("<tr><td class='gridEmptyData' colspan='11'><span class='checktstatusError'>Records show you are currently registered to vote in this town. If your address has changed within this town, log into the <a href='https://mvp.sec.state.vt.us''>My Voter Page </a>to update your record. If you no longer live in this town, please complete the online registration process. If your name appears in more than one town. Please email sos.elections@vermont.gov to have your name removed in one of the towns.</span></td></tr>")
+                        }
+                        $('.clsSearch').hide();
+                        $('.clsResult').show();
+                        //$("#lblheading").text(VOTER_INFORMATION);
+                        $("#lblFname").text($("#txtPopupFirstName").val());
+                        $("#lblLname").text($("#txtPopupLastName").val());
+                        $("#lblDOB").text($("#txtPopDOB").val());
+                    }
+                });
+            }
+            else {
+                $ec.obj('errorsPlaceHolderRow').style.display = "none";
+                return false;
+            }
+        }
+        $ec.obj('errorsPlaceHolderRow').style.display = "none";
+    }
+
+    /* Back to search*/
+    function BacktoSearch() {
+        $('.clsSearch').show();
+        $('.clsResult').hide();
+
+    }
+</script>
+
+        <!--end of contentpane -->
+        <!--end of bottom links -->
+        <div class="clr"></div>
+
+        <!-- end of container -->
+    </div>
+
+
+    <footer id="globalfooterhome" class="globalFooter_home" role="contentinfo" style="display: none;">
+        <div class="globalFooterInner">
+            <div class="container_footer">
+                © 2020   Copyright  &nbsp;&nbsp;    128 State Street,  Montpelier, Vermont 05633  &nbsp;&nbsp; Phone: 802-828-2363 &nbsp;&nbsp;  Fax: 802-828-5171 &nbsp;&nbsp;
+                <a href="https://sos.vermont.gov/" target="_blank">sos.vermont.gov</a>&nbsp;&nbsp;
+                Version 1.9
+            </div>
+            <script src="./VR__ Vermont Election Division ___files/require.js" type="text/javascript"></script>
+        </div>
+    </footer>
+
+    <footer id="globalfooterlogin" class="globalFooter" role="contentinfo" style="display: block;">
+        <div class="globalFooterInner">
+            © 2020   Copyright &nbsp;&nbsp;     128 State Street,  Montpelier, Vermont 05633 &nbsp;&nbsp;  Phone: 802-828-2363  &nbsp;&nbsp; Fax: 802-828-5171 &nbsp;&nbsp;
+            <a href="https://sos.vermont.gov/" target="_blank">sos.vermont.gov</a>&nbsp;&nbsp;
+            Version 1.9
+        </div>
+        <script src="./VR__ Vermont Election Division ___files/require.js" type="text/javascript"></script>
+    </footer>
+<script async="" type="text/javascript" src="./VR__ Vermont Election Division ___files/_Incapsula_Resource"></script>
+
+
+<script type="text/javascript" language="javascript">
+    jQuery().ready(function () {
+
+        /* Make All Data As Upper Case */
+        $("input[type='text']").on('blur', function () {
+            this.value = this.value.toUpperCase();
+        });
+
+        $(".help").hide();
+    });
+
+    if ('' == "Y") {
+
+        document.getElementById("globalfooterlogin").style.display = "none";
+        document.getElementById("globalfooterhome").style.display = "block";
+    }
+    else {
+
+        document.getElementById("globalfooterlogin").style.display = "block";
+        document.getElementById("globalfooterhome").style.display = "none";
+    }
+    $(document).ajaxStart(function () {
+        var userTheme = 'Default';
+        jsMin.showDialog("<div id='div_loading' style='overflow:hidden;font-family:Arial, verdana;font-size:12px;width: 300px; height: 50px; background-color: #FFFFFF;color:black; font-weight: bold;border: solid 1px #cccccc; vertical-align: middle; text-align: center; font-size: 11px'><br /><img src='../Images/Load_Progress.gif' alt='' align='absmiddle'  /><br /><label class='progessfont'>Please wait. Your request is being processed.</label></div>", 302, 50);
+    });
+
+    $(document).ajaxStop(function () {
+        jsMin.closeDialog();
+    });
+
+    function adjustDivs() {
+        var df = document.getElementById('__div_layer___fordialog');
+        if (df != null) {
+            df.style.position = 'fixed';
+            df.style.valign = 'middle';
+            df.style.align = 'center';
+        }
+    }
+
+
+    //Disable the Back space key
+    $(document).keydown(function (e) {
+        var nodeName = e.target.nodeName.toLowerCase();
+
+        if (e.which === 8) {
+            if ((nodeName === 'input' && e.target.type === 'text') ||
+                nodeName === 'textarea') {
+                // do nothing
+            } else {
+                e.preventDefault();
+            }
+        }
+    });
+
+    //Open help screen.
+    function viewHelpPage(bId) {
+        if (bId == undefined)
+            bId = ''
+        else
+            bId = "#" + bId;
+
+        $.ajax({
+            type: 'POST',
+            url: '/System/SaveViewPageInfo',
+            data: {
+                title: window.document.title,
+                link: 'Registration' + "/" + 'Index' + bId,
+                request: ''
+            },
+            success: function (data) {
+                var newWin = window.open('/System/ViewPage', 'NewPage', 'menubar=0,width=820,height=500,resizable=1,Top=' + (window.screen.height / 2 - 250) + ',Left=' + (window.screen.width / 2 - 400) + ',scrollbars=1');
+                if (newWin == null)
+                    $ec.messagebox("Please turn off the Pop-up Blocker");
+            }
+        });
+    }
+
+
+    //Open help screen.
+    function viewHelpPageContent(bId, link) {
+        if (bId == undefined)
+            bId = ''
+        else
+            bId = "_" + bId;
+        if (link == undefined) {
+            link = 'Registration/Index';
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/System/SaveViewPageInfo',
+            data: {
+                title: window.document.title,
+                link: link,
+                request: ''
+            },
+            success: function (data) {
+
+                var newWin = window.open('/System/ViewPage', 'NewPage', 'menubar=0,width=820,height=500,resizable=1,Top=' + (window.screen.height / 2 - 250) + ',Left=' + (window.screen.width / 2 - 400) + ',scrollbars=1');
+                if (newWin == null)
+                    //  alert('Please turn off the Pop-up Blocker');
+                    $ec.messagebox("Please turn off the Pop-up Blocker");
+            }
+        });
+
+    }
+
+
+</script>
+</body></html>

@@ -10,5 +10,5 @@ module.exports = new Schema({
     content: String,
     disableScrape: { type: Boolean, default: false },  // default enabled for all
     lastChangeDate: Date,
-    lastRunJobId: Schema.ObjectId
+    lastChangeJobId: Schema.ObjectId // jobId of lastChange
 });

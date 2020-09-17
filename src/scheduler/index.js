@@ -29,8 +29,8 @@ class Scheduler {
             // somehow notify missing pdfs
         }
 
-        const notifer = new Notifier();
-        notifer.notify(changes);
+        const notifier = new Notifier();
+        //notifier.notify(changes);
     }
     start() {
         this.interval = setInterval(this.run, this.periodMs)

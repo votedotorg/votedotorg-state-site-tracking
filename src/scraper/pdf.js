@@ -6,40 +6,35 @@ const request 	= require("request-promise-native");
 
 async function compare() 
 {
-	let oldFilePath = path.resolve( __dirname, "sample.pdf")
-	let newFilePath = path.resolve( __dirname, "remotePDF.pdf")
-
-	let remotePDFURL = 'https://github.com/BruceBGordon/votedotorg-state-site-tracking/raw/Will-Scraping/src/scraper/sample-changes-different.pdf'
+	var oldPDFHash 		= "262c87980f945f17d850e55439539499"
+	let newFilePath 	= path.resolve( __dirname, "remotePDF.pdf")
+	let remotePDFURL 	= 'https://github.com/BruceBGordon/votedotorg-state-site-tracking/raw/Will-Scraping/src/scraper/sample-changes-different.pdf'
 
     let pdfBuffer = await request.get({uri: remotePDFURL, encoding: null});
-    
-    console.log("Writing downloaded PDF file to " + newFilePath + "...");
-    
+        
     fs.writeFileSync(newFilePath, pdfBuffer);
 
-	let oldFileDataBuffer = fs.readFileSync(oldFilePath);
 	let newFileDataBuffer = fs.readFileSync(newFilePath);
 
-	pdf(oldFileDataBuffer).then(function(data) 
+    pdf(newFileDataBuffer).then(function(data) 
 	{
-	    let oldPDFText = data.text;
-		var oldPDFHash = crypto.createHash('md5').update(oldPDFText).digest('hex');
+	    var newPDFHash = crypto.createHash('md5').update(data.text).digest('hex');
 
-	    pdf(newFileDataBuffer).then(function(data) 
-		{
-		    let newPDFText = data.text;
+	    console.log("Old hash: " + oldPDFHash)
+	    console.log("New hash: " + newPDFHash)
 
-		    var newPDFHash = crypto.createHash('md5').update(newPDFText).digest('hex');
+	    if (newPDFHash === oldPDFHash)
+	    {
+			console.log("Hashes match");
+			//Do nothing, hashes are the same, we are done here.
+	    }
+	    else
+	    {
+			console.log("Hashes do not match");
 
-		    if (newPDFHash === oldPDFHash)
-		    {
-    			console.log("Hashes match");
-		    }
-		    else
-		    {
-    			console.log("Hashes do not match");
-		    }
-		});
+	    	//TODO: Insert the hash, etc. combination into database
+			//TODO: Send notifications that hashes do not match
+	    }
 	});
 }
 

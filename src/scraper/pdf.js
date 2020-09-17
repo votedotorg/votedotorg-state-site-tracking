@@ -1,24 +1,21 @@
-const fs = require('fs');
-const pdf = require('pdf-parse');
- 
-var http = require("http");
-var path = require('path');
-require('colors');
-var jsdiff = require('diff');
-var request = require('request');
+const fs 		= require('fs');
+const pdf 		= require('pdf-parse');
+const path 		= require('path');
+const crypto 	= require('crypto');
+const request 	= require("request-promise-native");
 
-http.createServer(function (request, response) 
+async function compare() 
 {
-   // Send the HTTP header 
-   // HTTP Status: 200 : OK
-   // Content Type: text/plain
-   	response.writeHead(200, {'Content-Type': 'text/plain'});
-   
-   	const fs = require('fs');
-	const pdf = require('pdf-parse');
-	 
 	let oldFilePath = path.resolve( __dirname, "sample.pdf")
-	let newFilePath = path.resolve( __dirname, "sample-changes-different.pdf")
+	let newFilePath = path.resolve( __dirname, "remotePDF.pdf")
+
+	let remotePDFURL = 'https://github.com/BruceBGordon/votedotorg-state-site-tracking/raw/Will-Scraping/src/scraper/sample-changes-different.pdf'
+
+    let pdfBuffer = await request.get({uri: remotePDFURL, encoding: null});
+    
+    console.log("Writing downloaded PDF file to " + newFilePath + "...");
+    
+    fs.writeFileSync(newFilePath, pdfBuffer);
 
 	let oldFileDataBuffer = fs.readFileSync(oldFilePath);
 	let newFileDataBuffer = fs.readFileSync(newFilePath);
@@ -26,35 +23,24 @@ http.createServer(function (request, response)
 	pdf(oldFileDataBuffer).then(function(data) 
 	{
 	    let oldPDFText = data.text;
+		var oldPDFHash = crypto.createHash('md5').update(oldPDFText).digest('hex');
 
 	    pdf(newFileDataBuffer).then(function(data) 
 		{
 		    let newPDFText = data.text;
 
-		    if (newPDFText === oldPDFText)
+		    var newPDFHash = crypto.createHash('md5').update(newPDFText).digest('hex');
+
+		    if (newPDFHash === oldPDFHash)
 		    {
-		    	console.log('PDF text is the same!');
+    			console.log("Hashes match");
 		    }
 		    else
 		    {
-		    	console.log('PDF text is different!');
-		    	var diff = jsdiff.diffChars(oldPDFText, newPDFText);
- 
- 				var completeDiffString = null;
-
-				diff.forEach(function(part){
-				  // green for additions, red for deletions
-				  // grey for common parts
-				  var color = part.added ? 'green' :
-				    part.removed ? 'red' : 'grey';
-				  completeDiffString = completeDiffString + part.value[color];
-				});
-				 
-				console.log(completeDiffString);
-				response.end(completeDiffString);
+    			console.log("Hashes do not match");
 		    }
 		});
 	});
-}).listen(8081);
+}
 
-console.log('Server running at http://127.0.0.1:8081/');
+compare()

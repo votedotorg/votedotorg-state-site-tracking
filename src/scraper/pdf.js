@@ -4,11 +4,11 @@ const path 		= require('path');
 const crypto 	= require('crypto');
 const request 	= require("request-promise-native");
 
-async function compare() 
+async function comparePDFs(pdfToRetrieve) 
 {
-	var oldPDFHash 		= "262c87980f945f17d850e55439539499"
+	var oldPDFHash 		= pdfToRetrieve.hash
 	let newFilePath 	= path.resolve( __dirname, "remotePDF.pdf")
-	let remotePDFURL 	= 'https://github.com/BruceBGordon/votedotorg-state-site-tracking/raw/Will-Scraping/src/scraper/sample-changes-different.pdf'
+	let remotePDFURL 	= pdfToRetrieve.url
 
     let pdfBuffer = await request.get({uri: remotePDFURL, encoding: null});
         
@@ -38,4 +38,13 @@ async function compare()
 	});
 }
 
-compare()
+//TODO: Pull out the list of pdf/hash, etc. from database
+
+let pdfsToCompare = [{"hash":"262c87980f945f17d850e55439539499","url":"https://github.com/BruceBGordon/votedotorg-state-site-tracking/raw/Will-Scraping/src/scraper/remotePDF.pdf"},
+					{"hash":"0761019b03c4a4e3de6fe2c398f0a2fc","url":"https://github.com/BruceBGordon/votedotorg-state-site-tracking/raw/Will-Scraping/src/scraper/remotePDF.pdf"}]
+
+for (var i = 0; i < pdfsToCompare.length; ++i)
+{
+	let loopPDF = pdfsToCompare[i]
+	comparePDFs(loopPDF)
+}

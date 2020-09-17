@@ -1,6 +1,7 @@
 const fs 		= require('fs');
 const pdf 		= require('pdf-parse');
 const path 		= require('path');
+const uuid 		= require('uuid');
 const mongo 	= require('mongodb');
 const crypto 	= require('crypto');
 const request 	= require("request-promise-native");
@@ -9,7 +10,7 @@ async function retrieveAndComparePDF(pdfToCompare)
 {
 	var oldPDFHash 				= pdfToCompare.hash
 	let remotePDFURL 			= pdfToCompare.url
-	let tempfilePathToWriteTo 	= path.resolve( __dirname, oldPDFHash + ".pdf")
+	let tempfilePathToWriteTo 	= path.resolve( __dirname, uuid.v4() + ".pdf")
 
 	//Get the pdf file
     let pdfBuffer = await request.get({uri: remotePDFURL, encoding: null})

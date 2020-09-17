@@ -1,8 +1,5 @@
-const fs 		= require('fs');
 const pdf 		= require('pdf-parse');
-const path 		= require('path');
 const axios 	= require('axios');
-const mongo 	= require('mongodb');
 const crypto 	= require('crypto');
 
 async function retrieveAndComparePDF(pdfToCompare) 

@@ -3,7 +3,7 @@ const { Schema } = require('mongoose');
 module.exports = new Schema({
     type: String,   // html or pdf
     state: String,    // state CA, NV
-    category: String,   // AbsenteeInfo, EarlyVote
+    category: String,   // AbsenteeInfo, GeneralElection
     url: String,
     hash: String,
     pdfs: [new Schema({ url: String, hash: String })],    // could have multiple pdf links on page

@@ -1,6 +1,7 @@
-const { Schema } = require('mongoose');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-module.exports = new Schema({
+let scrapeItem = new Schema({
   type: String, // html or pdf
   state: String, // state CA, NV
   category: String, // AbsenteeInfo, GeneralElection
@@ -12,3 +13,5 @@ module.exports = new Schema({
   lastChangeDate: Date,
   lastChangeJobId: Schema.ObjectId, // jobId of lastChange
 });
+
+module.exports = mongoose.model('ScrapeItem', scrapeItem);

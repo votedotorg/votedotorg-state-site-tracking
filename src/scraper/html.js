@@ -30,7 +30,9 @@ function findLinksToPdfs(html, baseUrl) {
 }
 
 function isRelative(path) {
-  return path.startsWith('.') || (path.startsWith('/') && !path.startsWith('//'));
+  // better detection for relative path urls since path may not start with '.' or '/'
+  var r = new RegExp('^(?:[a-z]+:)?//', 'i');
+  return !r.test(path);
 }
 
 module.exports = {

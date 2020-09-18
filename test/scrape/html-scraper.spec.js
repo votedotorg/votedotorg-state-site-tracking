@@ -1,11 +1,17 @@
 const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
 
 const assert = require('assert');
 const { compareVersions, extractText } = require('../../src/scraper/html');
 
 const BASE_URL = 'https://www.sos.alabama.gov/alabama-votes/voter/register-to-vote';
+
 describe('Html Scraper', function () {
+  after(function () {
+    mongoose.connection.close();
+  });
+
   describe('#extractText', function () {
     it('should extract text from a single node', function () {
       const text = extractText(`<html><body>Hello World</body></html>`);

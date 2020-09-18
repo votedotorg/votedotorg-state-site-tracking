@@ -1,7 +1,9 @@
-const { Schema } = require('mongoose');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-// no need for id
-module.exports = new Schema({
+let user = new Schema({
   email: String,
   name: String,
 });
+
+module.exports = mongoose.model('User', user);

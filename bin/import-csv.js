@@ -19,7 +19,7 @@ db.once('open', function() {
   console.log(chalk.blue("we're connected!"));
 });
 
-
+// Import scrape items
 fs.createReadStream(`${__dirname}/../${rawSourceFile}`)
     .pipe(parser)
     .on('data', row => {
@@ -42,15 +42,6 @@ fs.createReadStream(`${__dirname}/../${rawSourceFile}`)
                 }
             );
         });
-
-        // const item = new ScrapeItem({
-        //     state: row['State abbr'],
-        //     url: row['Absentee Info URL'],
-        // });
-        // item.save((err, currentItem) => {
-        //     if (err) return console.error(err);
-        //     console.info(chalk.greenBright('SAVED:', currentItem));
-        // });
     })
     .on('error', err => {
         console.error(err.message);
@@ -58,3 +49,6 @@ fs.createReadStream(`${__dirname}/../${rawSourceFile}`)
     .on('end', () => {
         console.log(chalk.blue('Done importing data from csv file!'));
     });
+
+
+// import users

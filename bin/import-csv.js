@@ -24,14 +24,33 @@ fs.createReadStream(`${__dirname}/../${rawSourceFile}`)
     .pipe(parser)
     .on('data', row => {
         // console.log('ROW:', row);
-        const item = new ScrapeItem({
-            state: row['State abbr'],
-            url: row['Absentee Info URL'],
+        const { 'Absentee Info URL': absenteeInfo, 'General Election Page URL': generalElection } = row;
+        
+        [ absenteeInfo, generalElection ].forEach((categoryUrl, index) => {
+            const category = index === 0 ? 'AbsenteeInfo' : 'GeneralElection';
+            ScrapeItem.findOneAndUpdate(
+                { state: row['State abbr'], category: category },
+                {
+                    state: row['State abbr'],
+                    category: category,
+                    url: categoryUrl,
+                },
+                { upsert: true },
+                (err, savedItem) => {
+                    if (err) return console.error('Error saving item:', err);
+                    console.info(chalk.blue('Item saved'));
+                }
+            );
         });
-        item.save((err, currentItem) => {
-            if (err) return console.error(err);
-            console.info(chalk.greenBright('SAVED:', currentItem));
-        });
+
+        // const item = new ScrapeItem({
+        //     state: row['State abbr'],
+        //     url: row['Absentee Info URL'],
+        // });
+        // item.save((err, currentItem) => {
+        //     if (err) return console.error(err);
+        //     console.info(chalk.greenBright('SAVED:', currentItem));
+        // });
     })
     .on('error', err => {
         console.error(err.message);

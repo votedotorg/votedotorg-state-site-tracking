@@ -1,14 +1,24 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true });
+// TODO: this makes the tests hang forever because we don't have a way to shut the connection down
+// mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true });
 
-const ScrapeAttempt = mongoose.Model(require('./scrape-attempt'));
+// TODO: this errors
+// const ScrapeAttempt = mongoose.Model(require('./scrape-attempt'));
 
-function getUrlsToScrape() {
+function loadItemsToScrape() {
+  // fetch ScrapeItems
   return Promise.resolve([
     {
-      url: 'example.com',
-      type: 'html|pdf',
+      type: 'html',
+      state: 'AL',
+      category: 'General Election',
+      url: 'https://www.sos.alabama.gov/alabama-votes/voter/register-to-vote',
+      hash: '',
+      pdfs: [{ url: '', hash: '' }],
+      content: '',
+      disableScrape: false,
+      lastChangeDate: undefined,
     },
   ]);
 }

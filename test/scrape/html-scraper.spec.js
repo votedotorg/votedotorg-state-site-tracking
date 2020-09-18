@@ -2,20 +2,18 @@ const fs = require('fs');
 const path = require('path');
 
 const assert = require('assert');
-const HtmlScraper = require('../../src/scraper/html');
+const { compareVersions, extractText } = require('../../src/scraper/html');
 
 const BASE_URL = 'https://www.sos.alabama.gov/alabama-votes/voter/register-to-vote';
 describe('Html Scraper', function () {
-  const scraper = new HtmlScraper();
-
   describe('#extractText', function () {
     it('should extract text from a single node', function () {
-      const text = scraper.extractText(`<html><body>Hello World</body></html>`);
+      const text = extractText(`<html><body>Hello World</body></html>`);
       assert.equal(text, 'Hello World');
     });
 
     it('should extract text from a webpage', function () {
-      const text = scraper.extractText(textOfFile('alabama-sos.html'), BASE_URL);
+      const text = extractText(textOfFile('alabama-sos.html'), BASE_URL);
       assert.equal(text, textOfFile('alabama-sos.txt'), 'Alabama page to text');
     });
   });
@@ -24,7 +22,7 @@ describe('Html Scraper', function () {
     it('should return diffs with context', function () {
       const newHtml = textOfFile('alabama-sos-min-2.html');
       const oldHtml = textOfFile('alabama-sos-min-1.html');
-      const { diffs } = scraper.compareVersions('', newHtml, oldHtml);
+      const { diffs } = compareVersions('', newHtml, oldHtml);
       assert.deepEqual(
         diffs,
         [
@@ -48,7 +46,7 @@ describe('Html Scraper', function () {
     it('should return links to pdfs', function () {
       const newHtml = textOfFile('alabama-sos-min-2.html');
       const oldHtml = textOfFile('alabama-sos-min-1.html');
-      const { pdfs } = scraper.compareVersions(BASE_URL, newHtml, oldHtml);
+      const { pdfs } = compareVersions(BASE_URL, newHtml, oldHtml);
       assert.deepEqual(
         pdfs,
         [

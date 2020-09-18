@@ -1,29 +1,18 @@
-const mongoose = require('mongoose');
+//
 
-// TODO: this makes the tests hang forever because we don't have a way to shut the connection down
-// mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true });
-
-// TODO: this errors
-// const ScrapeAttempt = mongoose.Model(require('./scrape-attempt'));
-
-function loadItemsToScrape() {
-  // fetch ScrapeItems
-  return Promise.resolve([
-    {
-      type: 'html',
-      state: 'AL',
-      category: 'General Election',
-      url: 'https://www.sos.alabama.gov/alabama-votes/voter/register-to-vote',
-      hash: '',
-      pdfs: [{ url: '', hash: '' }],
-      content: '',
-      disableScrape: false,
-      lastChangeDate: undefined,
-    },
-  ]);
+async function loadItemsToScrape() {
+  const ScrapeItem = require('./scrape-item');
+  const scrapeItems = await ScrapeItem.find({});
+  return scrapeItems;
 }
 
-function getMostRecentAttempt(forUrl) {
+async function getUsersToNotify() {
+  const User = require('./user');
+  const users = await User.find({});
+  return users;
+}
+
+async function getMostRecentAttempt(forUrl) {
   return Promise.resolve({
     timestamp: new Date(),
     url: forUrl,
@@ -32,30 +21,22 @@ function getMostRecentAttempt(forUrl) {
   });
 }
 
-function saveScrapeAttempt(forUrl, didChange, timestamp, type, hash, content) {
+async function saveScrapeAttempt(forUrl, didChange, timestamp, type, hash, content) {
   // always record that an attempt occurred
   // only record results if didChange is true
   const success = true;
   return Promise.resolve(success);
 }
 
-function markUrlDefunct(url, timestamp) {
+async function markUrlDefunct(url, timestamp) {
   const success = true;
   return Promise.resolve(success);
 }
 
-function getUsersToNotify() {
-  return Promise.resolve([
-    {
-      name: 'First Last',
-      email: 'foo@example.com',
-    },
-  ]);
-}
-
 module.exports = {
+  loadItemsToScrape,
+  getUsersToNotify,
   getMostRecentAttempt,
   saveScrapeAttempt,
   markUrlDefunct,
-  getUsersToNotify,
 };

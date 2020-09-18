@@ -1,6 +1,7 @@
-const { Schema } = require('mongoose');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-module.exports = new Schema({
+let scrapeAttempt = new Schema({
   scrapeItemId: Schema.ObjectId,
   scrapeStartDate: Date,
   scrapeEndDate: Date,
@@ -8,3 +9,5 @@ module.exports = new Schema({
   status: String,
   errorInfo: String,
 });
+
+module.exports = mongoose.model('ScrapeAttempt', scrapeAttempt);

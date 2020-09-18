@@ -45,6 +45,7 @@
   },
   "mocha": {
     "recursive": true,
+    "spec": "test/**/*.spec.js",
     "exclude": [
       "test/data/*"
     ]

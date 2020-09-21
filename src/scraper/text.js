@@ -10,7 +10,7 @@ function diffText(oldText, newText) {
   const newCleaned = cleanText(newText);
 
   const chunks = diff.diffSentences(oldCleaned, newCleaned);
-  // console.log(chunks);
+  //console.log(chunks);
 
   let lastChunk = { value: '' };
   const diffs = [];

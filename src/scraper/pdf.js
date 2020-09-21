@@ -10,23 +10,18 @@ async function hashPdf(url) {
   let options = {
     version: 'v2.0.550',
   };
-  axios
-    .get(url, { responseType: 'arraybuffer' })
-    .then(function (data) {
-      pdfParser(data, options)
-        .then(function (pdf) {
-          const hash = crypto.createHash('md5').update(pdf.text).digest('hex');
-          return { url, hash, error: '' };
-        })
-        .catch(function (error) {
-          console.log('pdfParser error: ', error.message);
-          return { url, hash: '', error: error.message };
-        });
-    })
-    .catch(function (error) {
-      console.log('axios error: ', error.message);
-      return { url, hash: '', error: error.message };
-    });
+  try {
+    const data = await axios.get(url, { responseType: 'arraybuffer' });
+    try {
+      const pdf = await pdfParser(data, options);
+      const hash = crypto.createHash('md5').update(pdf.text).digest('hex');
+      return { url, hash, error: null };
+    } catch (error) {
+      return { url, hash: null, error: `pdf-parse error: ${error.message}` };
+    }
+  } catch (error) {
+    return { url, hash: null, error: `axios error: ${error.message}` };
+  }
 }
 
 module.exports = {

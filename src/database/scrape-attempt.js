@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// scrape attempt on a specific scrape item
 let scrapeAttempt = new Schema({
   scrapeItemId: Schema.ObjectId,
   scrapeStartDate: Date,

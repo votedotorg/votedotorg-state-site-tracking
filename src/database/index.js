@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
+const ScrapeItem = require('./scrape-item');
+const User = require('./user');
+const ScrapeJob = require('./scrape-job');
+const ScrapeAttempt = require('./scrape-attempt');
 
 const { MONGODB_URL: mongoDBUrl } = process.env.NODE_ENV === 'production' ? process.env : require('./config');
 
 // TODO: this makes the tests hang forever because we don't have a way to shut the connection down
 // mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true });
-mongoose.connect(mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 //Get the default connection
 const connection = mongoose.connection;
@@ -16,49 +20,121 @@ connection.on('error', function () {
 });
 
 async function loadItemsToScrape() {
-  const ScrapeItem = require('./scrape-item');
-  const scrapeItems = await ScrapeItem.find({});
-  return scrapeItems;
+  return await ScrapeItem.find({});
+}
+
+async function findItemToScrape(queryObj) {
+  return await ScrapeItem.findOne(queryObj);
 }
 
 async function getUsersToNotify() {
-  const User = require('./user');
   const users = await User.find({});
   return users;
 }
 
-async function getMostRecentAttempt(forUrl) {
-  return Promise.resolve({
-    timestamp: new Date(),
-    url: forUrl,
-    hash: 'some md5?',
-    content: '<html><body>hello world</body></html>',
+async function createScrapeJob(startDate) {
+  const newScrapeJob = new ScrapeJob({
+    startDate: startDate,
+    status: 'fail',
+  });
+  return await newScrapeJob.save();
+}
+
+async function updateScrapeJob(id, endDate) {
+  return await ScrapeJob.findByIdAndUpdate(
+    { _id: id },
+    {
+      endDate: endDate,
+      status: 'success',
+    },
+    { new: true }, // return updated model
+    function (err, result) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('Scrape job updated succussfully!');
+      }
+    },
+  );
+}
+
+async function getScrapeJobs() {
+  const scrapeJobs = await ScrapeJob.find({});
+  return scrapeJobs;
+}
+
+async function clearScrapeJobs() {
+  await ScrapeJob.deleteMany({}, function (err) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('Scrape jobs cleared succussfully!');
+    }
   });
 }
 
-async function saveScrapeAttempt(forUrl, didChange, timestamp, type, hash, content) {
-  const ScrapeAttempt = require('./scrape-attempt');
+async function createScrapeAttempt(itemId, startDate, runJobId) {
   // always record that an attempt occurred
   // only record results if didChange is true
-  return new ScrapeAttempt({
-    scrapeItemId: Schema.ObjectId,
-    scrapeStartDate: timestamp,
-    scrapeEndDate: Date.now(),
-    runJobId: Schema.ObjectId, // updates for each scrape run
+  const newScrapeAttempt = new ScrapeAttempt({
+    scrapeItemId: itemId,
+    scrapeStartDate: startDate,
+    runJobId: runJobId, // updates for each scrape run
     status: 'success',
     errorInfo: '',
-  }).save();
+  });
+  return await newScrapeAttempt.save();
 }
 
-async function markUrlDefunct(url, timestamp) {
-  const success = true;
-  return Promise.resolve(success);
+async function updateScrapeAttempt(id, scrapeEndDate, errorInfo) {
+  return await ScrapeAttempt.findByIdAndUpdate(
+    { _id: id },
+    {
+      //scrapeEndDate: scrapeEndDate,
+      //status: ,
+      //errorInfo: errorInfo,
+    },
+    { new: true }, // return updated model
+    function (err, result) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('Scrape item updated succussfully!');
+      }
+    },
+  );
+}
+
+async function updateScrapeItem(id) {
+  return await ScrapeItem.findByIdAndUpdate(
+    { _id: id },
+    {
+      //hash: ,
+      //pdfs: ,
+      //content: ,
+      //lastChangeDate: ,
+      //lastChangeJobId: ,
+    },
+    { new: true }, // return updated model
+    function (err, result) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('Scrape item updated succussfully!');
+      }
+    },
+  );
 }
 
 module.exports = {
   loadItemsToScrape,
+  findItemToScrape,
   getUsersToNotify,
-  getMostRecentAttempt,
-  saveScrapeAttempt,
-  markUrlDefunct,
+  createScrapeJob,
+  updateScrapeJob,
+  getScrapeJobs,
+  clearScrapeJobs,
+  createScrapeAttempt,
+  updateScrapeAttempt,
+  updateScrapeItem,
 };

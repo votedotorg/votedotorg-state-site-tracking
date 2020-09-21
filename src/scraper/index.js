@@ -8,12 +8,9 @@ const stableUrlSort = (l, r) => (l.url < r.url ? -1 : 1);
 async function evaluate(item) {
   try {
     console.log('Comparing url: ', item.url);
-    /*axios.get(item.url).then(function ({ data: current }) {
-
-    }).catch(function(error) {
-      console.log('axios error: ', error.message);
-      return { url, hash: '', error: error.message };
-    });*/
+    //console.log('item.content', item.content);
+    // if there is no previous content to compare to do nothing
+    //if (item.content) {
     const { data: current } = await axios.get(item.url);
     let { diffs, pdfs: pdfUrls } = compareVersions(item.url, current, item.content);
 
@@ -25,13 +22,19 @@ async function evaluate(item) {
     }
     // dedup urls
     pdfUrls = dedup(pdfUrls);
-    console.log('PDF URLs: ', pdfUrls);
+    console.log(`Found ${pdfUrls.length} PDF URLs`);
 
     let change = { item, diffs, changedPdfs: [] };
     const oldPdfs = item.pdfs.sort(stableUrlSort) || [];
     foundChange = foundChange || pdfUrls.length !== oldPdfs.length;
     for (let i = 0; i < pdfUrls.length; i++) {
+      console.log(`Hashing PDF URL ${i + 1} of ${pdfUrls.length}: ${pdfUrls[i]}`);
       const pdf = await hashPdf(pdfUrls[i]);
+      if (pdf.error) {
+        console.log(pdf.error);
+      } else {
+        console.log('PDF hash created');
+      }
       //console.log('PDF hash: ', pdf.hash);
       const matchingPdf = oldPdfs.find(({ url }) => url === pdf.url);
       if (!matchingPdf) {
@@ -58,6 +61,10 @@ async function evaluate(item) {
       }
     }
     return foundChange ? change : null;
+    //} else {
+    // no need to compare
+    //return null;
+    //}
   } catch (e) {
     // report the error
     console.error(`Failed querying ${item.url}`, e);

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// a scrape item is a url page that can contain multiple pdfs
 let scrapeItem = new Schema({
   type: String, // html or pdf
   state: String, // state CA, NV

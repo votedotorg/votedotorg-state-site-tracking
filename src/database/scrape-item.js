@@ -7,9 +7,9 @@ let scrapeItem = new Schema({
   state: String, // state CA, NV
   category: String, // AbsenteeInfo, GeneralElection
   url: String,
-  hash: String,
+  hash: String, // if type is pdf then the hash is stored here
   pdfs: [new Schema({ url: String, hash: String })], // could have multiple pdf links on page
-  content: String,
+  content: String, // if type is html then the last HTML content is stored here
   disableScrape: { type: Boolean, default: false }, // default enabled for all
   lastChangeDate: Date,
   lastChangeJobId: Schema.ObjectId, // jobId of lastChange

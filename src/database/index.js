@@ -19,12 +19,8 @@ connection.on('error', function () {
   console.log('Error connecting to MongoDB database');
 });
 
-async function loadItemsToScrape() {
-  return await ScrapeItem.find({});
-}
-
-async function findItemToScrape(queryObj) {
-  return await ScrapeItem.findOne(queryObj);
+async function loadItemsToScrape(queryObj) {
+  return await ScrapeItem.find(queryObj);
 }
 
 async function getUsersToNotify() {
@@ -35,7 +31,7 @@ async function getUsersToNotify() {
 async function createScrapeJob(startDate) {
   const newScrapeJob = new ScrapeJob({
     startDate: startDate,
-    status: 'fail',
+    status: 'failed',
   });
   return await newScrapeJob.save();
 }
@@ -58,6 +54,11 @@ async function updateScrapeJob(id, endDate) {
   );
 }
 
+// returns the latest successful scrape job
+async function getLatestScrapeJob() {
+  return await ScrapeJob.findOne({ status: 'success' }, {}, { sort: { created_at: -1 } }); //{ endDate: { $exists: true } }
+}
+
 async function getScrapeJobs() {
   const scrapeJobs = await ScrapeJob.find({});
   return scrapeJobs;
@@ -73,27 +74,51 @@ async function clearScrapeJobs() {
   });
 }
 
-async function createScrapeAttempt(itemId, startDate, runJobId) {
-  // always record that an attempt occurred
-  // only record results if didChange is true
-  const newScrapeAttempt = new ScrapeAttempt({
+async function createScrapeAttempt(itemId, startDate, runJobId, errorInfo) {
+  const obj = {
     scrapeItemId: itemId,
     scrapeStartDate: startDate,
-    runJobId: runJobId, // updates for each scrape run
-    status: 'success',
-    errorInfo: '',
-  });
+    runJobId: runJobId,
+    status: 'failed',
+  };
+  if (errorInfo) {
+    obj.errorInfo = errorInfo;
+  }
+  const newScrapeAttempt = new ScrapeAttempt(obj);
   return await newScrapeAttempt.save();
 }
 
 async function updateScrapeAttempt(id, scrapeEndDate, errorInfo) {
+  const obj = { scrapeEndDate: scrapeEndDate };
+  //if (errorInfo) {
+  //  obj.errorInfo = errorInfo;
+  //} else {
+  obj.status = 'success';
+  obj.errorInfo = '';
+  //}
   return await ScrapeAttempt.findByIdAndUpdate(
     { _id: id },
-    {
-      //scrapeEndDate: scrapeEndDate,
-      //status: ,
-      //errorInfo: errorInfo,
+    obj,
+    { new: true }, // return updated model
+    function (err, result) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('Scrape attempt updated succussfully!');
+      }
     },
+  );
+}
+
+// returns the latest successful scrape job
+async function getLatestScrapeAttempt() {
+  return await ScrapeAttempt.findOne({ status: 'success' }, {}, { sort: { created_at: -1 } });
+}
+
+async function updateScrapeItem(id, obj) {
+  return await ScrapeItem.findByIdAndUpdate(
+    { _id: id },
+    obj,
     { new: true }, // return updated model
     function (err, result) {
       if (err) {
@@ -105,22 +130,16 @@ async function updateScrapeAttempt(id, scrapeEndDate, errorInfo) {
   );
 }
 
-async function updateScrapeItem(id) {
-  return await ScrapeItem.findByIdAndUpdate(
-    { _id: id },
-    {
-      //hash: ,
-      //pdfs: ,
-      //content: ,
-      //lastChangeDate: ,
-      //lastChangeJobId: ,
-    },
-    { new: true }, // return updated model
-    function (err, result) {
+async function updateAllScrapeItems(obj) {
+  return await ScrapeItem.update(
+    {},
+    { $set: obj },
+    { multi: true }, // update multiple documents
+    function (err, writeResult) {
       if (err) {
         console.error(err);
       } else {
-        console.log('Scrape item updated succussfully!');
+        console.log('Scrape items updated succussfully!', writeResult);
       }
     },
   );
@@ -128,13 +147,15 @@ async function updateScrapeItem(id) {
 
 module.exports = {
   loadItemsToScrape,
-  findItemToScrape,
   getUsersToNotify,
   createScrapeJob,
   updateScrapeJob,
+  getLatestScrapeJob,
   getScrapeJobs,
   clearScrapeJobs,
   createScrapeAttempt,
   updateScrapeAttempt,
+  getLatestScrapeAttempt,
   updateScrapeItem,
+  updateAllScrapeItems,
 };

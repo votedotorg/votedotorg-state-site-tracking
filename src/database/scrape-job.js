@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 let scrapeJob = new Schema({
   startDate: Date,
   endDate: Date,
-  status: String, // success or fail
+  status: String, // success or failed
 });
 
 module.exports = mongoose.model('ScrapeJob', scrapeJob);

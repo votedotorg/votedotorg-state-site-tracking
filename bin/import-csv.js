@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -19,73 +19,75 @@ mongoose.connect(connetionString, { useNewUrlParser: true, useUnifiedTopology: t
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
+db.once('open', function () {
   console.log(chalk.blue("we're connected!"));
 });
 
 // Import scrape items
 const importScrapeItems = () => {
-    fs.createReadStream(`${__dirname}/../${rawSourceFile}`)
-        .pipe(parser)
-        .on('data', row => {
-            // console.log('ROW:', row);
-            if (!row['State abbr']) return;
-            const { 'Absentee Info URL': absenteeInfo, 'General Election Page URL': generalElection } = row;
-            
-            [ absenteeInfo, generalElection ].forEach((categoryUrl, index) => {
-                const category = index === 0 ? 'AbsenteeInfo' : 'GeneralElection';
-                ScrapeItem.findOneAndUpdate(
-                    { state: row['State abbr'], category: category },
-                    {
-                        state: row['State abbr'],
-                        category: category,
-                        url: categoryUrl,
-                    },
-                    { upsert: true },
-                    (err, savedItem) => {
-                        if (err) return console.error('Error saving item:', err);
-                        console.info(chalk.blue('Item saved:', savedItem));
-                    }
-                );
-            });
-        })
-        .on('error', err => {
-            console.error(err.message);
-        })
-        .on('end', () => {
-            console.log(chalk.blue('Done importing scrape item data from csv file!'));
-        });
-};
+  fs.createReadStream(`${__dirname}/../${rawSourceFile}`)
+    .pipe(parser)
+    .on('data', (row) => {
+      // console.log('ROW:', row);
+      if (!row['State abbr']) return;
+      const { 'Absentee Info URL': absenteeInfo, 'General Election Page URL': generalElection } = row;
 
+      [absenteeInfo, generalElection].forEach((categoryUrl, index) => {
+        let itemType = 'html';
+        if (categoryUrl.indexOf('.pdf') > 0) {
+          itemType = 'pdf';
+        }
+        const category = index === 0 ? 'AbsenteeInfo' : 'GeneralElection';
+        ScrapeItem.findOneAndUpdate(
+          { state: row['State abbr'], category: category },
+          {
+            type: itemType,
+            state: row['State abbr'],
+            category: category,
+            url: categoryUrl,
+            disableScrape: false,
+          },
+          { upsert: true },
+          (err, savedItem) => {
+            if (err) return console.error('Error saving item:', err);
+            console.info(chalk.blue('Item saved:', savedItem));
+          },
+        );
+      });
+    })
+    .on('error', (err) => {
+      console.error(err.message);
+    })
+    .on('end', () => {
+      console.log(chalk.blue('Done importing scrape item data from csv file!'));
+    });
+};
 
 // import users
 const importUsers = () => {
-    fs.createReadStream(`${__dirname}/../${usersFile}`)
-        .pipe(parser)
-        .on('data', row => {
-            // console.log('ROW:', row);
-            if (!row.email) return;
-            User.findOneAndUpdate(
-                { email: row.email },
-                { name: row.name, email: row.email },
-                { upsert: true },
-                (err, savedUser) => {
-                    if (err) return console.error('Error saving user:', err);
-                    console.info(chalk.blue('User saved:', savedUser));
-                }
-            );
-        })
-        .on('error', err => {
-            console.error(err.message);
-        })
-        .on('end', () => {
-            console.log(chalk.blue('Done importing user data from csv file!'));
-        });
+  fs.createReadStream(`${__dirname}/../${usersFile}`)
+    .pipe(parser)
+    .on('data', (row) => {
+      // console.log('ROW:', row);
+      if (!row.email) return;
+      User.findOneAndUpdate(
+        { email: row.email },
+        { name: row.name, email: row.email },
+        { upsert: true },
+        (err, savedUser) => {
+          if (err) return console.error('Error saving user:', err);
+          console.info(chalk.blue('User saved:', savedUser));
+        },
+      );
+    })
+    .on('error', (err) => {
+      console.error(err.message);
+    })
+    .on('end', () => {
+      console.log(chalk.blue('Done importing user data from csv file!'));
+    });
 };
-
 
 // Run imports
 importScrapeItems();
 importUsers();
-
-

@@ -31,7 +31,7 @@ async function startJob() {
   const lastScrapeJob = await getLatestScrapeJob();
   if (lastScrapeJob) {
     console.log(
-      `\n********** Last successful scrape job: ${new Date(lastScrapeJob.startDate).toISOString()} **********\n`,
+      `\n********** Last successful scrape job: ${new Date(lastScrapeJob.startDate).toString()} **********\n`,
     );
   } else {
     console.log(`\n********** No successful scrape jobs **********\n`);
@@ -39,15 +39,15 @@ async function startJob() {
 
   // record the start of the current scrape job
   const scrapeJobsStartDate = Date.now();
-  console.log(`\n********** Starting new scrape job: ${new Date(scrapeJobsStartDate).toISOString()} **********\n`);
+  console.log(`\n********** Starting new scrape job: ${new Date(scrapeJobsStartDate).toString()} **********\n`);
   let currentScrapeJob = await createScrapeJob(scrapeJobsStartDate);
 
   // get scrape items from the database
   console.log('\n********** Loading scrape items from database **********\n');
-  const items = await loadItemsToScrape({});
+  //const items = await loadItemsToScrape({});
 
   // DEBUG: find one item to scrape for testing
-  //const items = await loadItemsToScrape({ state: 'CA' });
+  const items = await loadItemsToScrape({ state: 'CA' });
   //console.log('items to scrape', items);
 
   const totalItems = items.length;
@@ -102,13 +102,13 @@ async function startJob() {
   const scrapeJobsEndDate = Date.now();
   const updatedScrapeJob = await updateScrapeJob(currentScrapeJob._id, scrapeJobsEndDate);
 
-  console.log(`\n********** Completed scrape job at ${new Date(scrapeJobsEndDate).toISOString()} **********\n`);
+  console.log(`\n********** Completed scrape job at ${new Date(scrapeJobsEndDate).toString()} **********\n`);
   const scrapeJobTimeSec = parseInt((scrapeJobsEndDate - scrapeJobsStartDate) / 1000);
   //console.log('scrapeJobTimeSec', scrapeJobTimeSec);
   const scrapeJobTimeMin = parseInt(scrapeJobTimeSec / 60);
   console.log(`Scrape job compeleted in ${scrapeJobTimeMin} min ${scrapeJobTimeSec % 60} sec`);
 
-  return changes;
+  return { changes, lastScrapeJob };
 }
 
 //
@@ -148,8 +148,12 @@ async function evaluate(item) {
         //console.log('PDF hash: ', pdf.hash);
         const matchingPdf = oldPdfs.find(({ url }) => url === pdf.url);
         if (!matchingPdf) {
-          // this is a newly added pdf
-          change.changedPdfs.push({ added: true, pdf });
+          if (!pdf.error) {
+            // this is a newly added pdf
+            change.changedPdfs.push({ added: true, pdf });
+          } else {
+            change.changedPdfs.push({ removed: true, pdf });
+          }
           foundChange = true;
         } else {
           if (pdf.hash !== matchingPdf.hash) {
@@ -183,7 +187,17 @@ async function evaluate(item) {
   }
 }
 
+async function resetScrapeItems() {
+  return await updateAllScrapeItems({
+    hash: null,
+    pdfs: [],
+    content: null,
+    lastChangeDate: null,
+    lastChangeJobId: null,
+  });
+}
+
 module.exports = {
   startJob,
-  evaluate,
+  resetScrapeItems,
 };

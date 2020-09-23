@@ -1,5 +1,5 @@
 const { notify } = require('../notifier');
-const { startJob, evaluate } = require('../scraper');
+const { startJob, resetScrapeItems } = require('../scraper');
 
 class Scheduler {
   constructor(periodMs) {
@@ -8,24 +8,27 @@ class Scheduler {
   }
 
   async run() {
-    //
-    await startJob();
+    // DEBUG: to reset scrape items back to initial state
+    await resetScrapeItems();
 
-    // send changes to notifier
-    //notify(changes).then(function (data) {
-    // exit for now
-    //process.exit();
-    //});
+    // start the scrape job
+    const { changes, lastScrapeJob } = await startJob();
+
+    // send changes to notifier, set third param to true for testing notification email
+    await notify(changes, lastScrapeJob, true);
+
+    this.stop();
   }
 
   start() {
     // temporarily disable interval
-    //this.interval = setInterval(this.run, this.periodMs);
+    //this.interval = setInterval(this.run, this.period);
     this.run();
   }
 
   stop() {
     //clearInterval(this.interval);
+    process.exit();
   }
 }
 

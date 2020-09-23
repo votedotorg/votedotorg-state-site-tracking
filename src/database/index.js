@@ -56,7 +56,7 @@ async function updateScrapeJob(id, endDate) {
 
 // returns the latest successful scrape job
 async function getLatestScrapeJob() {
-  return await ScrapeJob.findOne({ status: 'success' }, {}, { sort: { created_at: -1 } }); //{ endDate: { $exists: true } }
+  return await ScrapeJob.findOne({ status: 'success' }, {}, { sort: { startDate: -1 } });
 }
 
 async function getScrapeJobs() {
@@ -131,7 +131,7 @@ async function updateScrapeItem(id, obj) {
 }
 
 async function updateAllScrapeItems(obj) {
-  return await ScrapeItem.update(
+  return await ScrapeItem.updateMany(
     {},
     { $set: obj },
     { multi: true }, // update multiple documents

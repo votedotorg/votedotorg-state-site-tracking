@@ -4,7 +4,7 @@ const { getUsersToNotify } = require('../database');
 const { SENDGRID_USERNAME: user, SENDGRID_PASSWORD: pass } =
   process.env.NODE_ENV === 'production' ? process.env : require('./config');
 
-async function notify(changes, lastScrapeJob, test) {
+async function notify(changes, lastScrapeJob, useTestAccount) {
   if (changes && changes.length > 0) {
     // Create a SMTP transporter object
     let obj = {
@@ -13,9 +13,9 @@ async function notify(changes, lastScrapeJob, test) {
     };
 
     // if testing then create test account
-    if (test) {
+    if (useTestAccount) {
       let account = await nodemailer.createTestAccount();
-      console.log('Credentials obtained, sending notification email...');
+      console.log('Credentials obtained, sending notification email ...');
       obj = {
         host: account.smtp.host,
         port: account.smtp.port,
@@ -26,7 +26,7 @@ async function notify(changes, lastScrapeJob, test) {
         },
       };
     } else {
-      console.log('Sending notification email...');
+      console.log('Sending notification email ...');
     }
 
     let transporter = nodemailer.createTransport(obj);
@@ -42,7 +42,7 @@ async function notify(changes, lastScrapeJob, test) {
     let info = await transporter.sendMail(message);
 
     console.log('Notification email sent successfully!');
-    if (test) {
+    if (useTestAccount) {
       console.log('Test notification email url:', nodemailer.getTestMessageUrl(info));
     }
     // only needed when using pooled connections
@@ -54,7 +54,7 @@ async function notify(changes, lastScrapeJob, test) {
 
 // creates a HTML format of the site changes
 function generateEmailBody(changes, lastScrapeJob) {
-  let body = '<h2>Changed State Websites</h2>';
+  let body = '<h2>State Website Changes</h2>';
   body += '<table>';
   body += `<tr><td>There were <strong>${changes.length}</strong> state website changes`;
   if (lastScrapeJob) {

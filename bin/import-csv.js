@@ -63,6 +63,14 @@ const importScrapeItems = () => {
     });
 };
 
+// cleanup previous users
+const removeUsers = () => {
+  User.deleteMany({}, (err) => {
+    if (err) return console.error(chalk.red('Error deleting users:', err));
+    console.info(chalk.blue('All Users successfully removed.'));
+  });
+};
+
 // import users
 const importUsers = () => {
   fs.createReadStream(`${__dirname}/../${usersFile}`)
@@ -90,4 +98,5 @@ const importUsers = () => {
 
 // Run imports
 importScrapeItems();
+removeUsers();
 importUsers();

@@ -13,9 +13,9 @@ to install your own.
 
 ### Environment variables
 
-We use the dotenv package to to manege environment variables needed for things
+We use the dotenv package to to manage environment variables needed for things
 like database connection details.
 
-To setup conneting to the database, copy the file `.env.template` to `.env`
-and add the values from the fields. This will allow the scripts that need
-to connect to the datase get the right connection info.
+To setup connection to the database, copy the file `.env.template` to `.env`
+and add the values for the fields. This will allow the scripts that need
+to connect to the database to get the right connection info.

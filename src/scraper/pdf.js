@@ -17,10 +17,10 @@ async function hashPdf(url) {
       const hash = crypto.createHash('md5').update(pdf.text).digest('hex');
       return { url, hash, error: null };
     } catch (error) {
-      return { url, hash: null, error: `pdf-parse error: ${error.message}` };
+      return { url, hash: null, error: { type: 'pdf-parse', message: error.message } };
     }
   } catch (error) {
-    return { url, hash: null, error: `axios error: ${error.message}` };
+    return { url, hash: null, error: { type: 'axios', message: error.message } };
   }
 }
 

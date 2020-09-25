@@ -48,7 +48,7 @@ async function updateScrapeJob(id, endDate) {
       if (err) {
         console.error(err);
       } else {
-        console.log('Scrape job updated succussfully!');
+        //console.log('Scrape job updated succussfully!');
       }
     },
   );
@@ -56,7 +56,7 @@ async function updateScrapeJob(id, endDate) {
 
 // returns the latest successful scrape job
 async function getLatestScrapeJob() {
-  return await ScrapeJob.findOne({ status: 'success' }, {}, { sort: { created_at: -1 } }); //{ endDate: { $exists: true } }
+  return await ScrapeJob.findOne({ status: 'success' }, {}, { sort: { startDate: -1 } });
 }
 
 async function getScrapeJobs() {
@@ -69,7 +69,7 @@ async function clearScrapeJobs() {
     if (err) {
       console.error(err);
     } else {
-      console.log('Scrape jobs cleared succussfully!');
+      //console.log('Scrape jobs cleared succussfully!');
     }
   });
 }
@@ -104,7 +104,7 @@ async function updateScrapeAttempt(id, scrapeEndDate, errorInfo) {
       if (err) {
         console.error(err);
       } else {
-        console.log('Scrape attempt updated succussfully!');
+        //console.log('Scrape attempt updated succussfully!');
       }
     },
   );
@@ -124,14 +124,14 @@ async function updateScrapeItem(id, obj) {
       if (err) {
         console.error(err);
       } else {
-        console.log('Scrape item updated succussfully!');
+        //console.log('Scrape item updated succussfully!');
       }
     },
   );
 }
 
 async function updateAllScrapeItems(obj) {
-  return await ScrapeItem.update(
+  return await ScrapeItem.updateMany(
     {},
     { $set: obj },
     { multi: true }, // update multiple documents

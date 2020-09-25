@@ -8,8 +8,8 @@ class Scheduler {
   }
 
   async run() {
-    // DEBUG: to reset scrape items back to initial state
-    await resetScrapeItems();
+    // DEBUG: uncomment to reset scrape items back to initial state
+    //await resetScrapeItems();
 
     // start the scrape job
     const { changes, lastScrapeJob } = await startJob();

@@ -55,43 +55,52 @@ async function notify(changes, lastScrapeJob, useTestAccount) {
 // creates a HTML format of the site changes
 function generateEmailBody(changes, lastScrapeJob) {
   let body = '<h2>State Website Changes</h2>';
-  body += '<table>';
-  body += `<tr><td>There were <strong>${changes.length}</strong> state website changes`;
-  if (lastScrapeJob) {
-    body += ` since last checked on <strong>${new Date(lastScrapeJob.endDate).toString()}</strong>`;
-  }
-  body += `</td></tr><tr><td>&nbsp;</td></tr>`;
+  body += '<div class="container message-container">';
+  let detail = '';
+  let totalPdfsChanged = 0;
   for (let i = 0; i < changes.length; i++) {
     const item = changes[i].item;
-    const itemHtmlChanged = changes[i].diffs.length > 0;
+    const itemHtmlChanged = changes[i].diffs && changes[i].diffs.length > 0;
     const itemState = item.state;
     const itemCategory = item.category;
     const itemUrl = item.url;
     const numChangedPdfs = changes[i].changedPdfs.length;
-    body += `<tr><td>HTML did ${
+    detail += `<div>&nbsp;</div>`;
+    detail += `<div class="state-change-header" style="margin-bottom: 5px">${i + 1}) HTML did ${
       itemHtmlChanged ? '' : 'not'
-    } change for state <strong>${itemState} - ${itemCategory}:</strong> <a href='${itemUrl}'>${itemUrl}</a></td></tr>`;
-    body += `<tr><td>&nbsp;</td></tr>`;
+    } change for state <strong>${itemState} - ${itemCategory}:</strong> <a href='${itemUrl}'>${itemUrl}</a></div>`;
     if (numChangedPdfs > 0) {
-      body += `<tr><th align=left>${numChangedPdfs} PDF files changed:</th></tr>`;
-      body += `<tr><td>`;
+      totalPdfsChanged += numChangedPdfs;
+      detail += `<div class="pdf-change-header" style="margin-left: 12px; margin-bottom: 5px"><strong>${numChangedPdfs}</strong> PDF files changed:</div>`;
+      detail += `<div class="pdf-change-list" style="margin-left: 20px">`;
       for (let n = 0; n < numChangedPdfs; n++) {
         const changedPdf = changes[i].changedPdfs[n];
         let typeOfChange;
         if (changedPdf.added) {
           typeOfChange = 'Added';
         } else if (changedPdf.modified) {
-          typeOfChange = 'Modified';
+          typeOfChange = 'Updated';
+        } else if (changedPdf.invalid) {
+          typeOfChange = 'Invalid';
         } else if (changedPdf.removed || changedPdf.pdf.error) {
-          typeOfChange = 'Removed';
+          typeOfChange = 'Missing';
         }
         const pdfUrl = changedPdf.pdf.url;
-        body += `<li>${typeOfChange}: <a href='${pdfUrl}'>${pdfUrl}</a></li>`;
+        detail += `<li>${typeOfChange}: <a href='${pdfUrl}'>${pdfUrl}</a></li>`;
       }
-      body += `</td></tr><tr><td>&nbsp;</td></tr>`;
+      detail += `</div>`;
+    } else {
+      detail += `<div class="pdf-change-header" style="margin-left: 12px; margin-bottom: 5px">No PDF files changed</div>`;
     }
   }
-  body += '</table>';
+  let summary = `<div class="row change-summary">There were <strong>${changes.length}</strong> state website changes and <strong>${totalPdfsChanged}</strong> total PDF changes`;
+  if (lastScrapeJob) {
+    summary += ` since last checked on <strong>${new Date(lastScrapeJob.endDate).toString()}</strong>`;
+  }
+  summary += `</div>`;
+  body = body + summary + detail;
+  body += '</div>';
+
   return body;
 }
 

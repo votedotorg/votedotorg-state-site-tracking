@@ -139,7 +139,7 @@ async function updateAllScrapeItems(obj) {
       if (err) {
         console.error(err);
       } else {
-        //console.log('Scrape items updated succussfully!', writeResult);
+        console.log('Scrape items updated succussfully!', writeResult);
       }
     },
   );

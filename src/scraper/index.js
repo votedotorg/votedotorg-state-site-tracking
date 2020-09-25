@@ -30,7 +30,7 @@ async function startJob() {
   // get the last successful scrape job
   const lastScrapeJob = await getLatestScrapeJob();
   if (lastScrapeJob) {
-    console.log(`Last successful job ran on ${new Date(lastScrapeJob.startDate).toString()}`);
+    console.log(`Last successful job completed on ${new Date(lastScrapeJob.endDate).toString()}`);
   } else {
     console.log('No previous successful jobs');
   }
@@ -40,12 +40,12 @@ async function startJob() {
   const scrapeJobsStartDate = Date.now();
   let currentScrapeJob = await createScrapeJob(scrapeJobsStartDate);
 
-  // get scrape items from the database
+  // get all scrape items from the database
   console.log('Loading urls from database ...');
-  //const items = await loadItemsToScrape({});
-
-  // DEBUG: find a couple state specific scrape items for testing
-  const items = await loadItemsToScrape({ state: 'CA' });
+  const items = await loadItemsToScrape({});
+  // DEBUG: find some state specific scrape items for testing
+  // TODO: Figure out why no change for first run of DC-AbsenteeInfo https://www.vote4dc.com/ApplyInstructions/Absentee
+  //const items = await loadItemsToScrape({ state: {'$in':['DC']} });
   //console.log('items to scrape', items);
 
   const totalItems = items.length;
@@ -97,7 +97,13 @@ async function startJob() {
       console.log(`No changes at ${itemUrl}`);
     }
   }
-  console.log(`Total of ${changes.length} urls changed`);
+  if (lastScrapeJob) {
+    console.log(
+      `Total of ${changes.length} urls changed since last job on ${new Date(lastScrapeJob.endDate).toString()}`,
+    );
+  } else {
+    console.log(`Total of ${changes.length} urls changed`);
+  }
 
   // update scrape job to indicate it completed
   const scrapeJobsEndDate = Date.now();
@@ -123,17 +129,20 @@ async function evaluate(item) {
     let foundChange = false;
     let change = { item, changedPdfs: [] };
     if (item.type == 'html') {
-      const { data: current } = await axios.get(item.url);
+      const { data: current } = await axios.get(item.url, {
+        validateStatus: function (status) {
+          console.log('Url status response:', status);
+          return status < 500; // Resolve only if the status code is less than 500
+        },
+      });
+      if (!current) {
+        return null;
+      }
       change.current = current;
       let { diffs, pdfs: pdfUrls } = compareVersions(item.url, current, item.content);
-      change.diffs = diffs;
-
+      change.diffs = diffs || [];
       foundChange = diffs.length > 0;
-      //if (foundChange) {
-      //  console.log('Found changes in html ...');
-      //} else {
-      //  console.log('No change in html ...');
-      //}
+
       // dedup urls
       pdfUrls = dedup(pdfUrls);
       console.log(`Found ${pdfUrls.length} pdfs`);
@@ -181,10 +190,17 @@ async function evaluate(item) {
     } else if (item.type == 'pdf') {
       const pdf = await hashPdf(item.url);
       if (!pdf.error) {
-        if (pdf.hash !== item.hash) {
-          console.log(`Updated pdf: ${item.url}`);
+        if (item.hash) {
+          if (pdf.hash !== item.hash) {
+            console.log(`Updated pdf: ${item.url}`);
+            // this pdf changed
+            change.changedPdfs.push({ modified: true, pdf });
+            foundChange = true;
+          }
+        } else {
+          console.log(`New pdf: ${item.url}`);
           // this pdf changed
-          change.changedPdfs.push({ modified: true, pdf });
+          change.changedPdfs.push({ added: true, pdf });
           foundChange = true;
         }
       } else if (pdf.error.type == 'axios') {
@@ -200,7 +216,7 @@ async function evaluate(item) {
     return foundChange ? change : null;
   } catch (e) {
     // report the error
-    console.error(`Failed querying ${item.url}`, e);
+    console.error(`Failed querying ${item.url}`);
   }
 }
 

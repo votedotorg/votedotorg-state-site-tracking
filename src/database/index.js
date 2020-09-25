@@ -4,10 +4,9 @@ const User = require('./user');
 const ScrapeJob = require('./scrape-job');
 const ScrapeAttempt = require('./scrape-attempt');
 
-const { MONGODB_URL: mongoDBUrl } = process.env.NODE_ENV === 'production' ? process.env : require('./config');
+const { MONGODB_URL: mongoDBUrl } = require('./config');
 
 // TODO: this makes the tests hang forever because we don't have a way to shut the connection down
-// mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true });
 mongoose.connect(mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 //Get the default connection

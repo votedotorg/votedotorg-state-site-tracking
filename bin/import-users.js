@@ -74,7 +74,7 @@ const importUsers = new Promise((resolve, reject) => {
             console.error('Error saving user:', err);
             return reject(err);
           }
-          console.info(chalk.blue('User saved:', savedUser._id, savedUser.name));
+          if (savedUser) console.info(chalk.blue('User saved:', savedUser._id, savedUser.name));
           dbUserCount++;
           if (csvUserCount === dbUserCount) {
             console.log(chalk.greenBright('Done updating users!'));

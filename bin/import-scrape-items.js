@@ -72,7 +72,7 @@ const importScrapeItems = new Promise((resolve, reject) => {
               console.error('Error saving item:', err);
               return reject(err);
             }
-            console.log(chalk.blue('Item saved:', savedItem._id, savedItem.state, savedItem.category));
+            if (savedItem) console.log(chalk.blue('Item saved:', savedItem._id, savedItem.state, savedItem.category));
             dbItemCount++;
             if (csvItemCount === dbItemCount) {
               console.log(chalk.greenBright('Done updating items!'));

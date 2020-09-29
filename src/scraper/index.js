@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { TaskQueue } = require('cwait');
 const { compareVersions } = require('./html');
 const { hashPdf } = require('./pdf');
 const { dedup } = require('../util/array');
@@ -17,6 +18,8 @@ const {
 } = require('../database');
 
 const stableUrlSort = (l, r) => (l.url < r.url ? -1 : 1);
+
+const MAX_SIMULTANEOUS_DOWNLOADS = 20;
 
 //
 async function startJob() {
@@ -45,31 +48,32 @@ async function startJob() {
   const items = await loadItemsToScrape({});
   // DEBUG: find some state specific scrape items for testing
   // TODO: Figure out why no change for first run of DC-AbsenteeInfo https://www.vote4dc.com/ApplyInstructions/Absentee
-  //const items = await loadItemsToScrape({ state: {'$in':['DC']} });
+  //const items = await loadItemsToScrape({ state: {'$in':['MS']} });
   //console.log('items to scrape', items);
 
   const totalItems = items.length;
   console.log(`Found ${totalItems} urls to check for changes.`);
 
+  // download the site content first
+  let itemsAndContent = await getSiteContent(items);
+
   const changes = [];
-  for (let i = 0; i < totalItems; i++) {
-    const itemUrl = items[i].url;
-    const itemState = items[i].state;
-    const itemCategory = items[i].category;
+  for (let i = 0; i < itemsAndContent.length; i++) {
+    const item = itemsAndContent[i].item;
+    const content = itemsAndContent[i].content;
+    const itemId = item._id;
+    const itemUrl = item.url;
+    const itemState = item.state;
+    const itemCategory = item.category;
     console.log(`Checking url ${i + 1} of ${totalItems}: ${itemUrl} (${itemState}-${itemCategory}) ...`);
     // create scrape attempt
-    const scrapeAttempt = await createScrapeAttempt(
-      items[i]._id,
-      Date.now(),
-      currentScrapeJob._id,
-      'Incomplete scrape',
-    );
+    const scrapeAttempt = await createScrapeAttempt(itemId, Date.now(), currentScrapeJob._id, 'Incomplete scrape');
 
-    const change = await evaluate(items[i]);
-    //console.log('change', change);
+    const change = await evaluate(item, content);
+
     // update scrape attempt
-    const updatedScrapeAttempt = await updateScrapeAttempt(scrapeAttempt._id, Date.now());
-    //console.log('updated scrapeAttempt', updatedScrapeAttempt);
+    const updatedScrapeAttempt = updateScrapeAttempt(scrapeAttempt._id, Date.now());
+    //console.log('updated scrape attempt', updatedScrapeAttempt);
     if (change) {
       console.log(`Found changes at ${itemUrl}`);
       changes.push(change);
@@ -91,8 +95,8 @@ async function startJob() {
       } else if (change.item.type == 'pdf' && change.changedPdfs.length == 1) {
         updateObj.hash = change.changedPdfs[0].pdf.hash;
       }
-      const updatedScrapeItem = await updateScrapeItem(items[i]._id, updateObj);
-      //console.log('updated scrapeAttempt', updatedScrapeAttempt);
+      const updatedScrapeItem = updateScrapeItem(item._id, updateObj);
+      //console.log('updated scrape item', updatedScrapeItem);
     } else {
       console.log(`No changes at ${itemUrl}`);
     }
@@ -121,25 +125,73 @@ async function startJob() {
   return { changes, lastScrapeJob };
 }
 
+async function getSiteContent(items) {
+  const queue = new TaskQueue(Promise, MAX_SIMULTANEOUS_DOWNLOADS);
+  const results = await Promise.all(
+    items.map(
+      queue.wrap(async (item) => {
+        if (item.type == 'html') {
+          console.log(`Downloading html data from ${item.url} ...`);
+          const { data: content } = await axios
+            .get(item.url, {
+              validateStatus: function (status) {
+                //console.log('Url status response:', status);
+                return status < 500; // Resolve only if the status code is less than 500
+              },
+            })
+            .catch(function (error) {
+              console.log(error.message);
+              return { item: item, content: null };
+            });
+          return { item, content };
+        } else if (item.type == 'pdf') {
+          console.log(`Downloading pdf data from ${item.url} ...`);
+          const content = await axios.get(item.url, { responseType: 'arraybuffer' }).catch(function (error) {
+            console.log(error.message);
+            return { item: item, content: null };
+          });
+          return { item, content };
+        }
+      }),
+    ),
+  );
+  return results;
+}
+
+async function getPDFHashes(pdfUrls) {
+  const queue = new TaskQueue(Promise, MAX_SIMULTANEOUS_DOWNLOADS);
+  const results = await Promise.all(
+    pdfUrls.map(
+      queue.wrap(async (url) => {
+        console.log(`Downloading pdf data from ${url} ...`);
+        const content = await axios.get(url, { responseType: 'arraybuffer' }).catch(function (error) {
+          console.log(error.message);
+          return { url: url, hash: null, error: { type: 'axios', message: error.message } };
+        });
+        console.log(`Hashing pdf from ${url} ...`);
+        const dataObj = await hashPdf(content.data);
+        return { url: url, hash: dataObj.hash, error: dataObj.error };
+      }),
+    ),
+  );
+  return results;
+}
+
 //
-async function evaluate(item) {
+async function evaluate(item, content) {
   try {
-    //console.log('Comparing url: ', item.url);
     // need to process html items different than pdf items
     let foundChange = false;
     let change = { item, changedPdfs: [] };
     if (item.type == 'html') {
-      const { data: current } = await axios.get(item.url, {
-        validateStatus: function (status) {
-          console.log('Url status response:', status);
-          return status < 500; // Resolve only if the status code is less than 500
-        },
-      });
-      if (!current) {
+      if (!content) {
         return null;
       }
-      change.current = current;
-      let { diffs, pdfs: pdfUrls } = compareVersions(item.url, current, item.content);
+
+      // compare current html with previous html
+      console.log(`Comparing previous html from ${item.url}`);
+      let { diffs, pdfs: pdfUrls } = compareVersions(item.url, content, item.content);
+      change.current = content;
       change.diffs = diffs || [];
       foundChange = diffs.length > 0;
 
@@ -147,33 +199,41 @@ async function evaluate(item) {
       pdfUrls = dedup(pdfUrls);
       console.log(`Found ${pdfUrls.length} pdfs`);
 
+      // get pdf data from previous job
       const oldPdfs = item.pdfs.sort(stableUrlSort) || [];
       foundChange = foundChange || pdfUrls.length !== oldPdfs.length;
 
-      for (let i = 0; i < pdfUrls.length; i++) {
-        console.log(`Checking pdf ${i + 1} of ${pdfUrls.length} ...`);
-        const pdf = await hashPdf(pdfUrls[i]);
-        //console.log('PDF hash: ', pdf.hash);
-        const matchingPdf = oldPdfs.find(({ url }) => url === pdf.url);
+      // get hashes for all pdf data
+      const pdfs = await getPDFHashes(pdfUrls);
+
+      // determine if pdfs have changed
+      for (let i = 0; i < pdfs.length; i++) {
+        console.log(`Checking pdf ${i + 1} of ${pdfs.length} ...`);
+        const pdfUrl = pdfs[i].url;
+        const pdfHash = pdfs[i].hash;
+        const pdfError = pdfs[i].error;
+        const matchingPdf = oldPdfs.find(({ url }) => url === pdfUrl);
         if (!matchingPdf) {
-          if (!pdf.error) {
-            console.log(`New pdf: ${pdfUrls[i]}`);
+          if (!pdfError) {
+            console.log(`New pdf: ${pdfUrl}`);
             // this is a newly added pdf
-            change.changedPdfs.push({ added: true, pdf });
-          } else if (pdf.error.type == 'axios') {
-            console.log(`Missing pdf: ${pdfUrls[i]}`);
-            change.changedPdfs.push({ removed: true, pdf });
-          } else if (pdf.error.type == 'pdf-parse') {
-            console.log(`Invalid pdf: ${pdfUrls[i]}`);
-            change.changedPdfs.push({ invalid: true, pdf });
+            change.changedPdfs.push({ added: true, pdf: pdfs[i] });
+          } else if (pdfError.type == 'axios') {
+            console.log(`Missing pdf: ${pdfUrl}`);
+            change.changedPdfs.push({ removed: true, pdf: pdfs[i] });
+          } else if (pdfError.type == 'pdf-parse') {
+            console.log(`Invalid pdf: ${pdfUrl}`);
+            change.changedPdfs.push({ invalid: true, pdf: pdfs[i] });
           }
           foundChange = true;
         } else {
-          if (pdf.hash !== matchingPdf.hash) {
-            console.log(`Updated pdf: ${pdfUrls[i]}`);
+          if (pdfHash !== matchingPdf.hash) {
+            console.log(`Updated pdf: ${pdfUrl}`);
             // this pdf changed
-            change.changedPdfs.push({ modified: true, pdf });
+            change.changedPdfs.push({ modified: true, pdf: pdfs[i] });
             foundChange = true;
+          } else {
+            console.log(`Unchanged pdf: ${pdfUrl}`);
           }
         }
       }
@@ -185,10 +245,12 @@ async function evaluate(item) {
           // this pdf was removed
           change.changedPdfs.push({ removed: true, pdf });
           foundChange = true;
+        } else {
+          console.log(`Unchanged pdf: ${pdf.url}`);
         }
       }
     } else if (item.type == 'pdf') {
-      const pdf = await hashPdf(item.url);
+      const pdf = await hashPdf(content.data);
       if (!pdf.error) {
         if (item.hash) {
           if (pdf.hash !== item.hash) {
@@ -196,6 +258,8 @@ async function evaluate(item) {
             // this pdf changed
             change.changedPdfs.push({ modified: true, pdf });
             foundChange = true;
+          } else {
+            console.log(`Unchanged pdf: ${item.url}`);
           }
         } else {
           console.log(`New pdf: ${item.url}`);
@@ -216,7 +280,7 @@ async function evaluate(item) {
     return foundChange ? change : null;
   } catch (e) {
     // report the error
-    console.error(`Failed querying ${item.url}`);
+    console.error(`Failed querying ${item.url}`, e.message);
   }
 }
 

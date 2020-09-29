@@ -3,24 +3,16 @@ const axios = require('axios');
 const crypto = require('crypto');
 
 /**
- * fetches the pdf and takes a hash of the pdf's text
- * @param {string} url the url of the pdf
+ * returns a hash of the pdf's text
+ * @param {buffer} data of the pdf
  */
-async function hashPdf(url) {
-  let options = {
-    version: 'v2.0.550',
-  };
+async function hashPdf(data) {
   try {
-    const data = await axios.get(url, { responseType: 'arraybuffer' });
-    try {
-      const pdf = await pdfParser(data, options);
-      const hash = crypto.createHash('md5').update(pdf.text).digest('hex');
-      return { url, hash, error: null };
-    } catch (error) {
-      return { url, hash: null, error: { type: 'pdf-parse', message: error.message } };
-    }
+    const pdf = await pdfParser(data, { version: 'v2.0.550' });
+    const hash = crypto.createHash('md5').update(pdf.text).digest('hex');
+    return { hash, error: null };
   } catch (error) {
-    return { url, hash: null, error: { type: 'axios', message: error.message } };
+    return { hash: null, error: { type: 'pdf-parse', message: error.message } };
   }
 }
 

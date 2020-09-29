@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "import": "node ./bin/import-csv.js",
+    "import": "npm run import:items && npm run import:users",
+    "import:items": "node ./bin/import-scrape-items.js",
+    "import:users": "node ./bin/import-users.js",
     "start": "node src/main.js",
     "test": "npx mocha --forbid-only",
     "test-dev": "npx mocha",

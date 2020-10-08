@@ -14,8 +14,8 @@ class Scheduler {
     // start the scrape job
     const { changes, lastScrapeJob } = await startJob();
 
-    // send changes to notifier, set third param to true for testing notification email
-    await notify(changes, lastScrapeJob, true);
+    // send changes to notifier
+    await notify(changes, lastScrapeJob);
 
     this.stop();
   }

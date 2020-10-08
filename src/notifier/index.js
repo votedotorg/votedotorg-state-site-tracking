@@ -3,26 +3,23 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 const { getUsersToNotify } = require('../database');
 
-let user = '';
-let pass = '';
-if (process.env.NODE_ENV === 'production') {
+let useTestAccount = true;
+let user, pass;
+if (process.env.SENDGRID_USERNAME && process.env.SENDGRID_PASSWORD) {
+  useTestAccount = false;
   user = process.env.SENDGRID_USERNAME;
   pass = process.env.SENDGRID_PASSWORD;
 }
 
-async function notify(changes, lastScrapeJob, useTestAccount) {
+//
+async function notify(changes, lastScrapeJob) {
   if (changes && changes.length > 0) {
-    // Create a SMTP transporter object
-    let obj = {
-      service: 'SendGrid',
-      auth: { user, pass },
-    };
-
-    // if testing then create test account
+    let transportConfig = {};
     if (useTestAccount) {
       let account = await nodemailer.createTestAccount();
       console.log('Credentials obtained, sending notification email ...');
-      obj = {
+      // Create a SMTP transporter object
+      transportConfig = {
         host: account.smtp.host,
         port: account.smtp.port,
         secure: account.smtp.secure,
@@ -33,9 +30,14 @@ async function notify(changes, lastScrapeJob, useTestAccount) {
       };
     } else {
       console.log('Sending notification email ...');
+      // Create a SMTP transporter object
+      transportConfig = {
+        service: 'SendGrid',
+        auth: { user, pass },
+      };
     }
 
-    let transporter = nodemailer.createTransport(obj);
+    let transporter = nodemailer.createTransport(transportConfig);
 
     // Message object
     let message = {

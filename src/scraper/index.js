@@ -19,6 +19,7 @@ const {
 
 const stableUrlSort = (l, r) => (l.url < r.url ? -1 : 1);
 
+// set the max number of concurrent HTML and PDF downloads
 const MAX_SIMULTANEOUS_DOWNLOADS = 20;
 
 //
@@ -47,9 +48,7 @@ async function startJob() {
   console.log('Loading urls from database ...');
   const items = await loadItemsToScrape({});
   // DEBUG: find some state specific scrape items for testing
-  // TODO: Figure out why no change for first run of DC-AbsenteeInfo https://www.vote4dc.com/ApplyInstructions/Absentee
-  //const items = await loadItemsToScrape({ state: {'$in':['MS']} });
-  //console.log('items to scrape', items);
+  //const items = await loadItemsToScrape({ state: {'$in':['CA', 'NY']} });
 
   const totalItems = items.length;
   console.log(`Found ${totalItems} urls to check for changes.`);
@@ -141,14 +140,14 @@ async function getSiteContent(items) {
             })
             .catch(function (error) {
               console.log(error.message);
-              return { item: item, content: null };
+              return { data: null };
             });
           return { item, content };
         } else if (item.type == 'pdf') {
           console.log(`Downloading pdf data from ${item.url} ...`);
           const content = await axios.get(item.url, { responseType: 'arraybuffer' }).catch(function (error) {
             console.log(error.message);
-            return { item: item, content: null };
+            return null;
           });
           return { item, content };
         }
@@ -164,13 +163,19 @@ async function getPDFHashes(pdfUrls) {
     pdfUrls.map(
       queue.wrap(async (url) => {
         console.log(`Downloading pdf data from ${url} ...`);
+        let errorMessage = '';
         const content = await axios.get(url, { responseType: 'arraybuffer' }).catch(function (error) {
           console.log(error.message);
-          return { url: url, hash: null, error: { type: 'axios', message: error.message } };
+          errorMessage = error.message;
+          return null;
         });
         console.log(`Hashing pdf from ${url} ...`);
-        const dataObj = await hashPdf(content.data);
-        return { url: url, hash: dataObj.hash, error: dataObj.error };
+        if (content) {
+          const dataObj = await hashPdf(content.data);
+          return { url: url, hash: dataObj.hash, error: dataObj.error };
+        } else {
+          return { url: url, hash: null, error: { type: 'axios', message: errorMessage } };
+        }
       }),
     ),
   );
@@ -297,4 +302,7 @@ async function resetScrapeItems() {
 module.exports = {
   startJob,
   resetScrapeItems,
+  getSiteContent,
+  getPDFHashes,
+  evaluate,
 };

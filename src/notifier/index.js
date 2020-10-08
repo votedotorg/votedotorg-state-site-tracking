@@ -1,8 +1,14 @@
+require('dotenv').config();
+
 const nodemailer = require('nodemailer');
 const { getUsersToNotify } = require('../database');
 
-const { SENDGRID_USERNAME: user, SENDGRID_PASSWORD: pass } =
-  process.env.NODE_ENV === 'production' ? process.env : require('./config');
+let user = '';
+let pass = '';
+if (process.env.NODE_ENV === 'production') {
+  user = process.env.SENDGRID_USERNAME;
+  pass = process.env.SENDGRID_PASSWORD;
+}
 
 async function notify(changes, lastScrapeJob, useTestAccount) {
   if (changes && changes.length > 0) {
